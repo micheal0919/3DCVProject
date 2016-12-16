@@ -68,7 +68,7 @@ struct ReconstructionEstimatorOptions
 {
 	// Type of reconstruction estimation to use.
 	ReconstructionEstimatorType reconstruction_estimator_type =
-	ReconstructionEstimatorType::GLOBAL;
+		ReconstructionEstimatorType::GLOBAL;
 
 	// If Global SfM is desired, which type of rotation and position estimation
 	// methods are used.
@@ -312,6 +312,7 @@ private:
 	void EstimateStructure();
 	bool BundleAdjustment();
 
+private:
 	CViewGraph* m_view_graph;
 	CReconstruction* m_reconstruction;
 

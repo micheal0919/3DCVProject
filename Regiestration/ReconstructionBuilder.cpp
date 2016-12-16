@@ -114,7 +114,8 @@ CReconstructionBuilder::CReconstructionBuilder(const ReconstructionBuilderOption
 	m_reconstruction.reset(new CReconstruction());
 	LOG(INFO) << std::endl;
 
-	m_track_builder.reset(new CTrackBuilder());
+	LOG(INFO) << "m_options.max_track_length = " << m_options.max_track_length;
+	m_track_builder.reset(new CTrackBuilder(m_options.max_track_length));
 	LOG(INFO) << std::endl;
 }
 
@@ -196,7 +197,7 @@ bool CReconstructionBuilder::BuildReconstruction(std::vector<CReconstruction*>* 
 	{
 		m_track_builder->BuildTracks(m_reconstruction.get());
 	}
-	LOG(INFO) << "Suceed to build all tracks" << std::endl;
+	LOG(INFO) << "Suceed to build all tracks, and the track num is " << m_reconstruction->NumTracks();
 	
 	// Remove uncalibrated views from the reconstruction and view graph.
 	if (m_options.only_calibrated_views) {
@@ -212,6 +213,8 @@ bool CReconstructionBuilder::BuildReconstruction(std::vector<CReconstruction*>* 
 		std::unique_ptr<CReconstructionEstimator> reconstruction_estimator(
 			CReconstructionEstimator::Create(
 			m_options.reconstruction_estimator_options));
+		
+		LOG(INFO);
 
 		const auto& summary = reconstruction_estimator->Estimate(m_view_graph.get(), m_reconstruction.get());
 
@@ -256,6 +259,8 @@ bool CReconstructionBuilder::AddTwoViewMatch(const std::string& image1,
 	const std::string& image2,
 	const ImagePairMatch& matches)
 {
+	LOG(INFO) << "Beginning of CReconstructionBuilder::AddTwoViewMatch";
+
 	// Get view ids from names and check that the views are valid (i.e. that
 	// they have been added to the reconstruction).
 	const ViewId view_id1 = m_reconstruction->ViewIdFromName(image1);
@@ -285,6 +290,8 @@ bool CReconstructionBuilder::AddTwoViewMatch(const std::string& image1,
 	// Add tracks to the track builder.
 	AddTracksForMatch(view_id1, view_id2, matches);
 
+	LOG(INFO) << "Endding of CReconstructionBuilder::AddTwoViewMatch";
+
 	return true;
 }
 
@@ -293,6 +300,8 @@ void CReconstructionBuilder::AddMatchToViewGraph(
 	const ViewId view_id2,
 	const ImagePairMatch& image_matches) 
 {
+	LOG(INFO) << "Beginning of CReconstructionBuilder::AddMatchToViewGraph";
+
 	// Add the view pair to the reconstruction. The view graph requires the two
 	// view info
 	// to specify the transformation from the smaller view id to the larger view
@@ -303,15 +312,21 @@ void CReconstructionBuilder::AddMatchToViewGraph(
 	}
 
 	m_view_graph->AddEdge(view_id1, view_id2, twoview_info);
+
+	LOG(INFO) << "Endding of CReconstructionBuilder::AddMatchToViewGraph";
 }
 
 void CReconstructionBuilder::AddTracksForMatch(const ViewId view_id1,
 	const ViewId view_id2,
 	const ImagePairMatch& matches) 
 {
+	LOG(INFO) << "Beginning of CReconstructionBuilder::AddTracksForMatch";
+
 	for (const auto& match : matches.correspondences) 
 	{
 		m_track_builder->AddFeatureCorrespondence(view_id1, match.feature1,
 			view_id2, match.feature2);
 	}
+
+	LOG(INFO) << "Endding of CReconstructionBuilder::AddTracksForMatch";
 }

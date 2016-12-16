@@ -26,6 +26,10 @@ struct ReconstructionBuilderOptions
 	// added to the reconstruction builder they are ignored with a LOG warning.
 	bool only_calibrated_views = false;
 
+	// Maximum allowable track length. Tracks that are too long are exceedingly
+	// likely to contain outliers.
+	int max_track_length = 20;
+
 	// Type of reconstruction estimation to use.
 	ReconstructionEstimatorType reconstruction_estimator_type =
 		ReconstructionEstimatorType::GLOBAL;

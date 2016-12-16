@@ -6,6 +6,8 @@
 #include <glog/logging.h>
 
 #include "RobustMatcher.h"
+#include "TrackBuildTest.h"
+#include "CameraTest.h"
 
 Test::Test()
 {
@@ -20,7 +22,9 @@ void Test::TestAll()
 {
 //	CHECK(surf_test()) << "surf_test error";
 //	CHECK(tiny_xml_test()) << "tiny xml test error";
-	CHECK(robust_matcher_test()) << "robust matcher test error";
+//	CHECK(robust_matcher_test()) << "robust matcher test error";
+//	CHECK(track_build_test()) << "track builder test error";
+	CHECK(camera_test()) << "camera test error";
 }
 
 bool Test::surf_test()
@@ -137,4 +141,16 @@ bool Test::robust_matcher_test()
 	LOG(INFO) << "The faset robust matched feature num is " << match.correspondences.size();
 
 	return true;
+}
+
+bool Test::track_build_test()
+{
+	CTrackBuildTest test;
+	return test.Test();
+}
+
+bool Test::camera_test()
+{
+	CCameraTest test;
+	return test.Test();
 }

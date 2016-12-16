@@ -30,6 +30,8 @@ namespace
 	// are simply initialized as half of the corresponding image size dimension.
 	void SetViewCameraIntrinsicsFromPriors(CView* view)
 	{
+		LOG(INFO);
+
 		CCamera* camera = view->MutableCamera();
 		const CameraIntrinsicsPrior prior = view->CameraIntrinsicsPrior();
 
@@ -38,38 +40,47 @@ namespace
 
 		// Set the focal length.
 		if (prior.focal_length.is_set) {
+			LOG(INFO);
 			camera->SetFocalLength(prior.focal_length.value);
 		}
 		else {
+			LOG(INFO);
 			camera->SetFocalLength(1.2 * static_cast<double>(prior.image_width > prior.image_height ? prior.image_width : prior.image_height));
 		}
 
 		// Set the principal point.
 		if (prior.principal_point[0].is_set && prior.principal_point[1].is_set) {
+			LOG(INFO);
 			camera->SetPrincipalPoint(prior.principal_point[0].value,
 				prior.principal_point[1].value);
 		}
 		else {
+			LOG(INFO);
 			camera->SetPrincipalPoint(prior.image_width / 2.0,
 				prior.image_height / 2.0);
 		}
 
 		// Set aspect ratio if available.
 		if (prior.aspect_ratio.is_set) {
+			LOG(INFO);
 			camera->SetAspectRatio(prior.aspect_ratio.value);
 		}
 
 		// Set skew if available.
 		if (prior.skew.is_set) {
+			LOG(INFO);
 			camera->SetSkew(prior.skew.value);
 		}
 
 		// Set radial distortion if available.
 		if (prior.radial_distortion[0].is_set &&
 			prior.radial_distortion[1].is_set) {
+			LOG(INFO);
 			camera->SetRadialDistortion(prior.radial_distortion[0].value,
 				prior.radial_distortion[1].value);
 		}
+
+		LOG(INFO);
 	}
 
 	// Sets the camera intrinsics from the CameraIntrinsicsPrior of each view. Views
@@ -78,11 +89,15 @@ namespace
 	// are simply initialized as half of the corresponding image size dimension.
 	void SetCameraIntrinsicsFromPriors(CReconstruction* reconstruction) 
 	{
+		LOG(INFO);
+
 		const auto& view_ids = reconstruction->ViewIds();
 		for (const ViewId view_id : view_ids) {
 			CView* view = CHECK_NOTNULL(reconstruction->MutableView(view_id));
 			SetViewCameraIntrinsicsFromPriors(view);
 		}
+
+		LOG(INFO);
 	}
 
 	// Removes features that have a reprojection error larger than the
@@ -146,11 +161,15 @@ namespace
 CReconstructionEstimator* CReconstructionEstimator::Create(
 	const ReconstructionEstimatorOptions& options) 
 {
+	LOG(INFO);
+
 	switch (options.reconstruction_estimator_type) {
 	case ReconstructionEstimatorType::GLOBAL:
+		LOG(INFO);
 		return new CGlobalReconstructionEstimator(options);
 		break;
 	case ReconstructionEstimatorType::INCREMENTAL:
+		LOG(INFO);
 		return new CIncrementalReconstructionEstimator(options);
 		break;
 	default:
@@ -161,16 +180,19 @@ CReconstructionEstimator* CReconstructionEstimator::Create(
 
 CIncrementalReconstructionEstimator::CIncrementalReconstructionEstimator(const ReconstructionEstimatorOptions& options) 
 {
+	LOG(INFO);
 }
 
 ReconstructionEstimatorSummary CIncrementalReconstructionEstimator::Estimate(CViewGraph* view_graph, CReconstruction* reconstruction)
 {
+	LOG(INFO);
 	ReconstructionEstimatorSummary summary;
 	return summary;
 }
 
 CGlobalReconstructionEstimator::CGlobalReconstructionEstimator(const ReconstructionEstimatorOptions& options) 
 {
+	LOG(INFO);
 	m_options = options;
 }
 
@@ -192,16 +214,22 @@ CGlobalReconstructionEstimator::CGlobalReconstructionEstimator(const Reconstruct
 // to the largest connected component in the view graph.
 ReconstructionEstimatorSummary CGlobalReconstructionEstimator::Estimate(CViewGraph* view_graph, CReconstruction* reconstruction) 
 {
+	LOG(INFO) << "Beginning of CGlobalReconstructionEstimator::Estimate";
+
 	CHECK_NOTNULL(reconstruction);
 	m_reconstruction = reconstruction;
 	m_view_graph = view_graph;
 	m_orientations.clear();
 	m_positions.clear();
 
+	LOG(INFO);
+
 	ReconstructionEstimatorSummary summary;
 	GlobalReconstructionEstimatorTimings global_estimator_timings;
 	theia::Timer total_timer;
 	theia::Timer timer;
+
+	LOG(INFO);
 
 	// Step 1. Filter the initial view graph and remove any bad two view
 	// geometries.
@@ -275,9 +303,10 @@ ReconstructionEstimatorSummary CGlobalReconstructionEstimator::Estimate(CViewGra
 
 	// Always triangulate once, then retriangulate and remove outliers depending
 	// on the reconstruciton estimator options.
-	for (int i = 0; i < m_options.num_retriangulation_iterations + 1; i++) {
+	for (int i = 0; i < m_options.num_retriangulation_iterations + 1; i++) 
+	{
 		// Step 8. Triangulate features.
-		LOG(INFO) << "Triangulating all features.";
+		LOG(INFO) << "Triangulating all features, iteration is " << i;
 		timer.Reset();
 		EstimateStructure();
 		summary.triangulation_time += timer.ElapsedTimeInSeconds();
@@ -328,6 +357,8 @@ ReconstructionEstimatorSummary CGlobalReconstructionEstimator::Estimate(CViewGra
 		<< global_estimator_timings.position_estimation_time;
 	summary.message = string_stream.str();
 
+	LOG(INFO) << "Endding of CGlobalReconstructionEstimator::Estimate";
+
 	return summary;
 }
 
@@ -338,7 +369,11 @@ bool CGlobalReconstructionEstimator::FilterInitialViewGraph()
 
 void CGlobalReconstructionEstimator::CalibrateCameras() 
 {
+	LOG(INFO) << "Beginning of CGlobalReconstructionEstimator::CalibrateCameras";
+
 	SetCameraIntrinsicsFromPriors(m_reconstruction);
+
+	LOG(INFO) << "Endding of CGlobalReconstructionEstimator::CalibrateCameras";
 }
 
 bool CGlobalReconstructionEstimator::EstimateGlobalRotations() 
@@ -363,6 +398,9 @@ void CGlobalReconstructionEstimator::FilterRelativeTranslation()
 
 bool CGlobalReconstructionEstimator::EstimatePosition() 
 {
+	LOG(INFO) << "Beginning of CGlobalReconstructionEstimator::EstimatePosition";
+
+	// set camera info from view info
 	std::vector<ViewId> ids = m_reconstruction->ViewIds();
 	for (const auto& id : ids)
 	{
@@ -371,12 +409,28 @@ bool CGlobalReconstructionEstimator::EstimatePosition()
 		view->MutableCamera()->SetOrientationFromRotationMatrix(view->CameraOrientationMatrix());
 		view->SetEstimated(true);
 	}
+	LOG(INFO);
+
+	// copy camera info to m_orientations and m_positions
+	for (const auto& id : ids)
+	{
+		const CView* view = m_reconstruction->View(id);
+		Eigen::Vector3d orientation = view->Camera().GetOrientationAsAngleAxis();
+		m_orientations[id] = orientation;
+			
+		Eigen::Vector3d pos = view->Camera().GetPosition();
+		m_positions[id] = pos;
+	}
 	
+	LOG(INFO) << "Beginning of CGlobalReconstructionEstimator::EstimatePosition";
+
 	return true;
 }
 
 void CGlobalReconstructionEstimator::EstimateStructure() 
 {
+	LOG(INFO);
+
 	// Estimate all tracks.
 	CTrackEstimator::Options triangulation_options;
 	triangulation_options.max_acceptable_reprojection_error_pixels =
@@ -390,6 +444,9 @@ void CGlobalReconstructionEstimator::EstimateStructure()
 
 	CTrackEstimator track_estimator(triangulation_options, m_reconstruction);
 	const CTrackEstimator::Summary summary = track_estimator.EstimateAllTracks();
+	
+	LOG(INFO);
+
 	return;
 }
 

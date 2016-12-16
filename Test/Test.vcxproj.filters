@@ -24,6 +24,51 @@
     <ClCompile Include="..\Regiestration\RobustMatcher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\Regiestration\Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\FeatureExtractorAndMatcher.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\ImageInfoIO.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\Reconstruction.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\ReconstructionBuilder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\ReconstructionEstimator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\TrackBuilder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\TrackEstimator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\Triangulation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\ViewGraph.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\util\timer.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Regiestration\util\util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackBuildTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangulationTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test.h">
@@ -33,6 +78,72 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\Regiestration\Types.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\ConnectedComponents.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\FeatureExtractorAndMatcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\ImageInfoIO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\MapUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\Reconstruction.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\ReconstructionBuilder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\ReconstructionEstimator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\Track.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\TrackBuilder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\TrackEstimator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\Triangulation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\View.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\ViewGraph.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\util\rotation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\util\rq_decomposition.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\util\timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\util\uitl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackBuildTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TestUitls.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangulationTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

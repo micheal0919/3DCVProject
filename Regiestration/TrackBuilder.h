@@ -14,7 +14,7 @@ class CReconstruction;
 class CTrackBuilder
 {
 public:
-	explicit CTrackBuilder();
+	explicit CTrackBuilder(const int max_track_length);
 	~CTrackBuilder();
 
 	// Adds a feature correspondence between two views.

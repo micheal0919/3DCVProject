@@ -152,14 +152,51 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Regiestration\Camera.cpp" />
+    <ClCompile Include="..\Regiestration\FeatureExtractorAndMatcher.cpp" />
+    <ClCompile Include="..\Regiestration\ImageInfoIO.cpp" />
+    <ClCompile Include="..\Regiestration\Reconstruction.cpp" />
+    <ClCompile Include="..\Regiestration\ReconstructionBuilder.cpp" />
+    <ClCompile Include="..\Regiestration\ReconstructionEstimator.cpp" />
     <ClCompile Include="..\Regiestration\RobustMatcher.cpp" />
+    <ClCompile Include="..\Regiestration\TrackBuilder.cpp" />
+    <ClCompile Include="..\Regiestration\TrackEstimator.cpp" />
+    <ClCompile Include="..\Regiestration\Triangulation.cpp" />
+    <ClCompile Include="..\Regiestration\util\timer.cc" />
+    <ClCompile Include="..\Regiestration\util\util.cpp" />
+    <ClCompile Include="..\Regiestration\ViewGraph.cpp" />
+    <ClCompile Include="CameraTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="TrackBuildTest.cpp" />
+    <ClCompile Include="TriangulationTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Regiestration\Camera.h" />
+    <ClInclude Include="..\Regiestration\ConnectedComponents.h" />
+    <ClInclude Include="..\Regiestration\FeatureExtractorAndMatcher.h" />
+    <ClInclude Include="..\Regiestration\ImageInfoIO.h" />
+    <ClInclude Include="..\Regiestration\MapUtils.h" />
+    <ClInclude Include="..\Regiestration\Reconstruction.h" />
+    <ClInclude Include="..\Regiestration\ReconstructionBuilder.h" />
+    <ClInclude Include="..\Regiestration\ReconstructionEstimator.h" />
     <ClInclude Include="..\Regiestration\RobustMatcher.h" />
+    <ClInclude Include="..\Regiestration\Track.h" />
+    <ClInclude Include="..\Regiestration\TrackBuilder.h" />
+    <ClInclude Include="..\Regiestration\TrackEstimator.h" />
+    <ClInclude Include="..\Regiestration\Triangulation.h" />
     <ClInclude Include="..\Regiestration\Types.h" />
+    <ClInclude Include="..\Regiestration\util\rotation.h" />
+    <ClInclude Include="..\Regiestration\util\rq_decomposition.h" />
+    <ClInclude Include="..\Regiestration\util\timer.h" />
+    <ClInclude Include="..\Regiestration\util\uitl.h" />
+    <ClInclude Include="..\Regiestration\View.h" />
+    <ClInclude Include="..\Regiestration\ViewGraph.h" />
+    <ClInclude Include="CameraTest.h" />
     <ClInclude Include="test.h" />
+    <ClInclude Include="TestUitls.h" />
+    <ClInclude Include="TrackBuildTest.h" />
+    <ClInclude Include="TriangulationTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

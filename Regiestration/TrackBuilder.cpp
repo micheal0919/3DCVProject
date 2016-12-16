@@ -5,9 +5,11 @@
 #include "Reconstruction.h"
 
 
-CTrackBuilder::CTrackBuilder()
+CTrackBuilder::CTrackBuilder(const int max_track_length)
 	:m_num_features(0)
 {
+	LOG(INFO) << "max_track_length = " << max_track_length;
+	m_connected_components.reset(new CConnectedComponents<uint64_t>(max_track_length));
 }
 
 
@@ -20,6 +22,13 @@ void CTrackBuilder::AddFeatureCorrespondence(const ViewId view_id1,
 	const ViewId view_id2,
 	const Feature& feature2) 
 {
+	LOG(INFO);
+
+	LOG(INFO) << "view_id1 = " << view_id1;
+	LOG(INFO) << "feature1 = " << feature1.x << " " << feature1.y;
+	LOG(INFO) << "view_id2 = " << view_id2;
+	LOG(INFO) << "feature2 = " << feature2.x << " " << feature2.y;
+
 	CHECK_NE(view_id1, view_id2)
 		<< "Cannot add 2 features from the same image as a correspondence for "
 		"track generation.";
@@ -30,8 +39,11 @@ void CTrackBuilder::AddFeatureCorrespondence(const ViewId view_id1,
 	const int feature1_id = FindOrInsert(image_feature1);
 	const int feature2_id = FindOrInsert(image_feature2);
 
+	LOG(INFO);
+
 	m_connected_components->AddEdge(feature1_id, feature2_id);
 
+	LOG(INFO);
 }
 
 void CTrackBuilder::BuildTracks(CReconstruction* reconstruction) {

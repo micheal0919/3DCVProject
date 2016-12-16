@@ -1,15 +1,14 @@
 #ifndef __CONNECTED_COMPONENTS_H__
 #define __CONNECTED_COMPONENTS_H__
 
-#include "MapUtils.h"
-
-#include <glog/logging.h>
 #include <stdint.h>
-
 #include <limits>
 #include <unordered_map>
 #include <unordered_set>
 
+#include <glog/logging.h>
+
+#include "MapUtils.h"
 
 // A connected components algorithm based on the union-find structure. Connected
 // components from a graph are needed for estimating poses from a view graph and
