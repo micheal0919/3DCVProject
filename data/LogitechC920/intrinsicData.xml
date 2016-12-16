@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Argos version="1.0">
+	<IntrinsicDataPerspective id="intr">
+		<Base_Parameters id="Base_Parameters" calibrated="true">
+			<scalar id="w">640</scalar>
+			<scalar id="h">480</scalar>
+			<scalar id="cx">0.510408</scalar>
+			<scalar id="cy">0.489991</scalar>
+		</Base_Parameters>
+		<Perspective_Parameters id="Perspective_Parameters">
+			<scalar id="fx">0.97172</scalar>
+			<scalar id="fy">1.29811</scalar>
+			<scalar id="s">0</scalar>
+			<Lens_Distortion id="Lens_Distortion">
+				<scalar id="k1">0.136484</scalar>
+				<scalar id="k2">-0.284885</scalar>
+				<scalar id="k3">-0.00375515</scalar>
+				<scalar id="k4">-0.00103986</scalar>
+				<scalar id="k5">0.177523</scalar>
+			</Lens_Distortion>
+		</Perspective_Parameters>
+	</IntrinsicDataPerspective>
+</Argos>

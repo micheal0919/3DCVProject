@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Argos version="1.0">
+	<MarkerWorld id="MarkerWorld">
+		<string id="name">The World</string>
+		<list id="RigidBodyList">
+			<MarkerRigidBody>
+				<string id="name">RB Cow</string>
+				<list id="MarkerList">
+					<MarkerModel>
+						<string id="name">Marker Cow</string>
+						<string id="analog marker">true</string>
+						<scalar id="Radius">0.0307</scalar>
+						<Center id="Center">
+							<scalar id="cx">0</scalar>
+							<scalar id="cy">0</scalar>
+							<scalar id="cz">0</scalar>
+						</Center>
+						<Normal id="Normal">
+							<scalar id="nx">0</scalar>
+							<scalar id="ny">0</scalar>
+							<scalar id="nz">1</scalar>
+						</Normal>
+						<Origin id="Origin">
+							<scalar id="ux">1</scalar>
+							<scalar id="uy">0</scalar>
+							<scalar id="uz">0</scalar>
+						</Origin>
+						<Code id="Code">
+							<string id="innerRing">1100</string>
+							<string id="outerRing">001000101111</string>
+						</Code>
+					</MarkerModel>
+				</list>
+			</MarkerRigidBody>
+			
+		</list>
+	</MarkerWorld>
+</Argos>

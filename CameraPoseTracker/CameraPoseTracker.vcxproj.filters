@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MakerTracker\ClosedContour.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\Ellipse2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerCorrelationTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerCorrespondencyMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerObservation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerObservationSamplingMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerRigidBody.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerRigidBodyPoseMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerSampling.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerTracker.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerTrackerInterface.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTracker\MarkerWorld.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectShowVideoGrabber.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageInfoIO.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseEstimator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MakerTracker\ClosedContour.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\Ellipse2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\exportMarkerTracker.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerCorrelationTable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerCorrespondencyMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerModel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerObservation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerObservationSamplingMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerRigidBody.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerRigidBodyPoseMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerSampling.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerTracker.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerTrackerInterface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MarkerWorld.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTracker\MatrixCv.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectShowVideoGrabber.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageInfoIO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseEstimator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
