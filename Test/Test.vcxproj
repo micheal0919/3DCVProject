@@ -168,6 +168,7 @@
     <ClCompile Include="CameraTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="TestUitls.cpp" />
     <ClCompile Include="TrackBuildTest.cpp" />
     <ClCompile Include="TriangulationTest.cpp" />
   </ItemGroup>

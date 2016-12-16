@@ -27,6 +27,11 @@ void SwapCameras(TwoViewInfo* twoview_info);
 	TypeName(const TypeName&);               \
 	void operator=(const TypeName&)
 
+// Determines the array size an array a.
+#define ARRAYSIZE(a) \
+	((sizeof(a) / sizeof(*(a))) / \
+	static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
+
 bool ImageInfoToCameraInfo(const ImageInfo& info, CameraIntrinsicsPrior& intrinsics,
 	Eigen::Matrix3d& camera_orientation_matrix, Eigen::Vector3d& camera_postion);
 

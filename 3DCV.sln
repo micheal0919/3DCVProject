@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Regiestration", "Regiestrat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CameraPoseTracker", "CameraPoseTracker\CameraPoseTracker.vcxproj", "{2A55758C-8DD3-4EAC-BB4C-DA2A8FD41A65}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Detection", "Detection\Detection.vcxproj", "{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -53,6 +55,16 @@ Global
 		{2A55758C-8DD3-4EAC-BB4C-DA2A8FD41A65}.Release|Win32.Build.0 = Release|Win32
 		{2A55758C-8DD3-4EAC-BB4C-DA2A8FD41A65}.Release|x64.ActiveCfg = Release|x64
 		{2A55758C-8DD3-4EAC-BB4C-DA2A8FD41A65}.Release|x64.Build.0 = Release|x64
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Debug|Win32.Build.0 = Debug|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Debug|x64.ActiveCfg = Debug|x64
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Release|Win32.ActiveCfg = Release|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Release|Win32.Build.0 = Release|Win32
+		{E4F1E78B-3DC7-4339-8D18-F1E3E06E1D38}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

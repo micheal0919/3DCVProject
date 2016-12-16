@@ -13,5 +13,6 @@ private:
 	bool robust_matcher_test();
 	bool track_build_test();
 	bool camera_test();
+	bool triangulate_test();
 };
 
