@@ -28,48 +28,38 @@ int main(int argc, char* argv[])
 		// 0: log to file; 1: log to std io
 		FLAGS_logtostderr = 1;
 		FLAGS_logbuflevel = 1;
-		google::SetLogDestination(0, "./LOG.");
+		google::SetLogDestination(0, "./Registration.");
 	}
 
-	if (FLAGS_option == "reconstruction")
-	{
-		LOG(INFO) << "Reconstruct the 3D model" << endl;
-		ReconstructionBuilderOptions options;
-		options.image_path = FLAGS_image_path;
-		options.num_image = FLAGS_num_image;
-		options.image_info_file_path = FLAGS_image_info_file_path;
-		options.feam_options.num_keypoint = FLAGS_num_keypoint;
-		LOG(INFO) << std::endl;
+	LOG(INFO) << "Reconstruct the 3D model" << endl;
+	ReconstructionBuilderOptions options;
+	options.image_path = FLAGS_image_path;
+	options.num_image = FLAGS_num_image;
+	options.image_info_file_path = FLAGS_image_info_file_path;
+	options.feam_options.num_keypoint = FLAGS_num_keypoint;
+	LOG(INFO) << std::endl;
 
-		CReconstructionBuilder builder(options);
-		LOG(INFO) << std::endl;
+	CReconstructionBuilder builder(options);
+	LOG(INFO) << std::endl;
 
-		builder.AddImages();
-		LOG(INFO) << std::endl;
+	builder.AddImages();
+	LOG(INFO) << std::endl;
 
-		builder.ExtractAndMatchFeatures();
-		LOG(INFO) << std::endl;
+	builder.ExtractAndMatchFeatures();
+	LOG(INFO) << std::endl;
 
-		std::vector<CReconstruction*> reconstructions;
-		builder.BuildReconstruction(&reconstructions);
-		LOG(INFO) << std::endl;
+	std::vector<CReconstruction*> reconstructions;
+	builder.BuildReconstruction(&reconstructions);
+	LOG(INFO) << std::endl;
 
-		for (int i = 0; i < reconstructions.size(); i++) {
-			const std::string output_file = FLAGS_output_reconstruction;
-			LOG(INFO) << "Writing reconstruction " << i << " to " << output_file;
-			CHECK(WriteReconstruction(*reconstructions[i], output_file))
-				<< "Could not write reconstruction to file.";
-		}
-
-		LOG(INFO) << "Reconstruct the 3D model sucessfully" << endl;
+	for (int i = 0; i < reconstructions.size(); i++) {
+		const std::string output_file = FLAGS_output_reconstruction;
+		LOG(INFO) << "Writing reconstruction " << i << " to " << output_file;
+		CHECK(WriteReconstruction(*reconstructions[i], output_file))
+			<< "Could not write reconstruction to file.";
 	}
-	else if (FLAGS_option == "detection")
-	{
 
-	}
-	else
-	{
-	}
+	LOG(INFO) << "Reconstruct the 3D model sucessfully" << endl;
 
 	LOG(INFO) << "end of main function" << endl;
 

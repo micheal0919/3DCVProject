@@ -5,6 +5,8 @@
 #include <opencv2/nonfree/features2d.hpp>
 #include <glog/logging.h>
 
+#include "RobustMatcher.h"
+
 Test::Test()
 {
 }
@@ -17,7 +19,8 @@ Test::~Test()
 void Test::TestAll()
 {
 //	CHECK(surf_test()) << "surf_test error";
-	CHECK(tiny_xml_test()) << "tiny xml test error";
+//	CHECK(tiny_xml_test()) << "tiny xml test error";
+	CHECK(robust_matcher_test()) << "robust matcher test error";
 }
 
 bool Test::surf_test()
@@ -116,6 +119,22 @@ bool Test::tiny_xml_test()
 	RootElement->SetAttribute("magnitude", magnitude);
 
 	myDocument->SaveFile("output.xml");
+
+	return true;
+}
+
+bool Test::robust_matcher_test()
+{
+	std::string img_path_1 = "../data/images/000000.jpg";
+	std::string img_path_2 = "../data/images/000002.jpg";
+
+	CRobustMatcher matcher;
+	ImagePairMatch match;
+	matcher.RobustMatch(img_path_1, img_path_2, match);
+	LOG(INFO) << "The robust matched feature num is " << match.correspondences.size();
+
+	matcher.FastRobustMatch(img_path_1, img_path_2, match);
+	LOG(INFO) << "The faset robust matched feature num is " << match.correspondences.size();
 
 	return true;
 }

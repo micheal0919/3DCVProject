@@ -18,33 +18,33 @@ CFeatureExtractorAndMatcher::CFeatureExtractorAndMatcher(const Options& options)
 	m_matcher.reset(new CRobustMatcher);
 	LOG(INFO) << std::endl;
 
-	cv::Ptr<cv::FeatureDetector> orb = cv::ORB::create();
-	LOG(INFO) << std::endl;
+	//cv::Ptr<cv::FeatureDetector> orb = cv::ORB::create();
+	//LOG(INFO) << std::endl;
 
-	// set feature detector
-	m_matcher->SetFeatureDetector(orb);
-	// set descriptor extractor
-	m_matcher->SetDescriptorExtractor(orb);
-	LOG(INFO) << std::endl;
+	//// set feature detector
+	//m_matcher->SetFeatureDetector(orb);
+	//// set descriptor extractor
+	//m_matcher->SetDescriptorExtractor(orb);
+	//LOG(INFO) << std::endl;
 
-	// instantiate LSH index parameters
-	cv::Ptr<cv::flann::IndexParams> indexParams = cv::makePtr<cv::flann::LshIndexParams>(m_options.lsh_index_params_1, 
-		m_options.lsh_index_params_2, m_options.lsh_index_params_3);
-	// instantiate flann search parameters
-	cv::Ptr<cv::flann::SearchParams> searchParams = cv::makePtr<cv::flann::SearchParams>(m_options.search_params);
-	LOG(INFO) << std::endl;
+	//// instantiate LSH index parameters
+	//cv::Ptr<cv::flann::IndexParams> indexParams = cv::makePtr<cv::flann::LshIndexParams>(m_options.lsh_index_params_1, 
+	//	m_options.lsh_index_params_2, m_options.lsh_index_params_3);
+	//// instantiate flann search parameters
+	//cv::Ptr<cv::flann::SearchParams> searchParams = cv::makePtr<cv::flann::SearchParams>(m_options.search_params);
+	//LOG(INFO) << std::endl;
 
-	// instantiate FlannBased matcher
-	cv::Ptr<cv::DescriptorMatcher> matcher = cv::makePtr<cv::FlannBasedMatcher>(indexParams, searchParams);
-	LOG(INFO) << std::endl;
-	
-	// set matcher
-	m_matcher->SetDescriptorMatcher(matcher);
-	LOG(INFO) << std::endl;
+	//// instantiate FlannBased matcher
+	//cv::Ptr<cv::DescriptorMatcher> matcher = cv::makePtr<cv::FlannBasedMatcher>(indexParams, searchParams);
+	//LOG(INFO) << std::endl;
+	//
+	//// set matcher
+	//m_matcher->SetDescriptorMatcher(matcher);
+	//LOG(INFO) << std::endl;
 
-	// set ratio test parameter
-	m_matcher->SetRatio(m_options.ratio); 
-	LOG(INFO) << std::endl;
+	//// set ratio test parameter
+	//m_matcher->SetRatio(m_options.ratio); 
+	//LOG(INFO) << std::endl;
 }
 
 

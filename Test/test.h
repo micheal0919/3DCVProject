@@ -10,5 +10,6 @@ public:
 private:
 	bool surf_test();
 	bool tiny_xml_test();
+	bool robust_matcher_test();
 };
 

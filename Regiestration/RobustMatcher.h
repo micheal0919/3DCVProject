@@ -2,6 +2,7 @@
 #define __ROBUSTMATCHER_H__
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/nonfree/nonfree.hpp>
 #include "Types.h"
 
 #include <glog/logging.h>
@@ -12,27 +13,34 @@ public:
 	CRobustMatcher() : m_ratio(0.8f)
 	{
 		// ORB is the default feature
-		m_detector = cv::ORB::create();
-		m_extractor = cv::ORB::create();
+//		m_detector = cv::FeatureDetector::create("SIFT");
+		m_detector = cv::makePtr<cv::ORB>(1000);
+		m_extractor = m_detector;
 
-		// BruteFroce matcher with Norm Hamming is the default matcher
-//		m_matcher = cv::makePtr<cv::BFMatcher>((int)cv::NORM_HAMMING, false);
+		// instantiate LSH index parameters
+		cv::Ptr<cv::flann::IndexParams> indexParams = cv::makePtr<cv::flann::LshIndexParams>(6, 12, 1);
+		// instantiate flann search parameters
+		cv::Ptr<cv::flann::SearchParams> searchParams = cv::makePtr<cv::flann::SearchParams>(50);
+		LOG(INFO) << std::endl;
+
+		// instantiate FlannBased matcher
+		m_matcher = cv::makePtr<cv::FlannBasedMatcher>(indexParams, searchParams);
 		LOG(INFO) << std::endl;
 	}
 
 	~CRobustMatcher() {}
 
 	// Set the feature detector
-	void SetFeatureDetector(const cv::Ptr<cv::FeatureDetector>& detect) { m_detector = detect; }
+//	void SetFeatureDetector(const cv::Ptr<cv::FeatureDetector>& detect) { m_detector = detect; }
 
 	// Set the descriptor extractor
-	void SetDescriptorExtractor(const cv::Ptr<cv::DescriptorExtractor>& desc) { m_extractor = desc; }
+//	void SetDescriptorExtractor(const cv::Ptr<cv::DescriptorExtractor>& desc) { m_extractor = desc; }
 
 	// Set ratio parameter for the ratio test
-	void SetRatio(float rat) { m_ratio = rat; }
+//	void SetRatio(float rat) { m_ratio = rat; }
 
 	// Set the matcher
-	void SetDescriptorMatcher(const cv::Ptr<cv::DescriptorMatcher>& match) { m_matcher = match; }
+//	void SetDescriptorMatcher(const cv::Ptr<cv::DescriptorMatcher>& match) { m_matcher = match; }
 
 	// Match feature points using ratio and symmetry test
 	void RobustMatch(const std::string& image_path_1, const std::string& image_path_2, ImagePairMatch& match);
@@ -79,7 +87,7 @@ private:
 	// pointer to the matcher object
 	cv::Ptr<cv::DescriptorMatcher> m_matcher;
 	// max ratio between 1st and 2nd NN
-	float m_ratio;
+	double m_ratio;
 };
 
 #endif // __ROBUSTMATCHER_H__

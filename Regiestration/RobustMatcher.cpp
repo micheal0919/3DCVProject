@@ -11,23 +11,31 @@ void CRobustMatcher::RobustMatch(const std::string& image_path_1, const std::str
 	cv::Mat image_1 = cv::imread(image_path_1);
 	CHECK(image_1.data != NULL) << "Fail to read image " << image_path_1;
 
-	cv::namedWindow("image", cv::WINDOW_AUTOSIZE);
-	cv::imshow("image", image_1);
+	//cv::namedWindow("image", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("image", image_1);
+	//cv::waitKey();
 
 	// 1a. Detection of the ORB features
 	std::vector<cv::KeyPoint> keypoints_1;
 	this->ComputeKeyPoints(image_1, keypoints_1);
-	LOG(INFO);
+	LOG(INFO) << "The num of key points in image_1 is " << keypoints_1.size();
 
 	// 1b. Extraction of the ORB descriptors
 	cv::Mat descriptors_1;
 	this->ComputeDescriptors(image_1, keypoints_1, descriptors_1);
 	LOG(INFO);
 
+	LOG(INFO) << "image_path_2 = " << image_path_2;
 	cv::Mat image_2 = cv::imread(image_path_2, cv::IMREAD_COLOR);
+	CHECK(image_2.data != NULL) << "Fail to read image " << image_path_2;
+	//cv::namedWindow("image", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("image", image_1);
+	//cv::waitKey();
+
 	// 1c. Detection of the ORB features
 	std::vector<cv::KeyPoint> keypoints_2;
 	this->ComputeKeyPoints(image_2, keypoints_2);
+	LOG(INFO) << "The num of key points in image_2 is " << keypoints_2.size();
 
 	// 1d. Extraction of the ORB descriptors
 	cv::Mat descriptors_2;
@@ -39,25 +47,35 @@ void CRobustMatcher::RobustMatch(const std::string& image_path_1, const std::str
 
 	// 2a. From image 1 to image 2
 	m_matcher->knnMatch(descriptors_1, descriptors_2, matches12, 2); // return 2 nearest neighbours
-	LOG(INFO);
+	LOG(INFO) << "The num of match12 is " << matches12.size();
 
 	// 2b. From image 2 to image 1
 	m_matcher->knnMatch(descriptors_2, descriptors_1, matches21, 2); // return 2 nearest neighbours
-	LOG(INFO);
+	LOG(INFO) << "The num of match21 is " << matches21.size();
 
 	// 3. Remove matches for which NN ratio is > than threshold
 	// clean image 1 -> image 2 matches
 	RatioTest(matches12);
-	LOG(INFO);
+	LOG(INFO) << "The num of match12 is " << matches12.size();
 
 	// clean image 2 -> image 1 matches
 	RatioTest(matches21);
-	LOG(INFO);
+	LOG(INFO) << "The num of match21 is " << matches21.size();
 
 	// 4. Remove non-symmetrical matches
 	std::vector<cv::DMatch> good_matches;
 	SymmetryTest(matches12, matches21, good_matches);
-	LOG(INFO);
+	LOG(INFO) << "The num of good_matches is " << good_matches.size();;
+
+	//-- Draw only "good" matches
+	//cv::Mat img_matches;
+	//drawMatches(image_1, keypoints_1, image_2, keypoints_2,
+	//	good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
+	//	std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+
+	//cv::namedWindow("image", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("image", img_matches);
+	//cv::waitKey();
 
 	// 5. Set ImagePairMatch 
 	match.image1 = image_path_1;
@@ -65,8 +83,12 @@ void CRobustMatcher::RobustMatch(const std::string& image_path_1, const std::str
 	match.correspondences.clear();
 	for (size_t i = 0; i < good_matches.size(); i++)
 	{
-		cv::Point2f point1 = keypoints_2[good_matches[i].trainIdx].pt;
-		cv::Point2f point2 = keypoints_2[good_matches[i].queryIdx].pt; 
+//		LOG(INFO) << "i = " << i;
+		cv::Point2f point1 = keypoints_1[good_matches[i].queryIdx].pt;
+//		LOG(INFO);
+		cv::Point2f point2 = keypoints_2[good_matches[i].trainIdx].pt;
+//		LOG(INFO);
+
 		FeatureCorrespondence feature_co;
 		//feature_co.feature1(0) = point1.x;
 		//feature_co.feature1(1) = point1.y;
@@ -77,8 +99,9 @@ void CRobustMatcher::RobustMatch(const std::string& image_path_1, const std::str
 		feature_co.feature1.y = point1.y;
 		feature_co.feature2.x = point2.x;
 		feature_co.feature2.y = point2.y;
-
+//		LOG(INFO);
 		match.correspondences.emplace_back(feature_co);
+//		LOG(INFO);
 	}
 
 	LOG(INFO) << "Ending of CRobustMatcher::RobustMatch";
@@ -87,32 +110,51 @@ void CRobustMatcher::RobustMatch(const std::string& image_path_1, const std::str
 // Match feature points using ratio test
 void CRobustMatcher::FastRobustMatch(const std::string& image_path_1, const std::string& image_path_2, ImagePairMatch& match)
 {
-	cv::Mat image_1 = cv::imread(image_path_1, cv::IMREAD_COLOR);
+	LOG(INFO) << "Beginning of CRobustMatcher::FastRobustMatch";
+
+	LOG(INFO) << "image_path_1 = " << image_path_1;
+	cv::Mat image_1 = cv::imread(image_path_1);
+	CHECK(image_1.data != NULL) << "Fail to read image " << image_path_1;
+
+	//cv::namedWindow("image", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("image", image_1);
+	//cv::waitKey();
 
 	// 1a. Detection of the ORB features
 	std::vector<cv::KeyPoint> keypoints_1;
 	this->ComputeKeyPoints(image_1, keypoints_1);
+	LOG(INFO) << "The num of key points in image_1 is " << keypoints_1.size();
 
 	// 1b. Extraction of the ORB descriptors
 	cv::Mat descriptors_1;
 	this->ComputeDescriptors(image_1, keypoints_1, descriptors_1);
+	LOG(INFO);
 
-
+	LOG(INFO) << "image_path_2 = " << image_path_2;
 	cv::Mat image_2 = cv::imread(image_path_2, cv::IMREAD_COLOR);
+	CHECK(image_2.data != NULL) << "Fail to read image " << image_path_2;
+	//cv::namedWindow("image", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("image", image_1);
+	//cv::waitKey();
+
 	// 1c. Detection of the ORB features
 	std::vector<cv::KeyPoint> keypoints_2;
 	this->ComputeKeyPoints(image_2, keypoints_2);
+	LOG(INFO) << "The num of key points in image_2 is " << keypoints_2.size();
 
 	// 1d. Extraction of the ORB descriptors
 	cv::Mat descriptors_2;
 	this->ComputeDescriptors(image_2, keypoints_2, descriptors_2);
+	LOG(INFO);
 
 	// 2. Match the two image descriptors
 	std::vector<std::vector<cv::DMatch> > matches;
 	m_matcher->knnMatch(descriptors_1, descriptors_2, matches, 2);
+	LOG(INFO) << "The num of matches is " << matches.size();
 
 	// 3. Remove matches for which NN ratio is > than threshold
 	RatioTest(matches);
+	LOG(INFO) << "The num of matches is " << matches.size();
 
 	// 4. Fill good matches container
 	std::vector<cv::DMatch> good_matches;
@@ -121,6 +163,17 @@ void CRobustMatcher::FastRobustMatch(const std::string& image_path_1, const std:
 	{
 		if (!matchIterator->empty()) good_matches.push_back((*matchIterator)[0]);
 	}
+	LOG(INFO) << "The num of good matches is " << good_matches.size();
+
+	//-- Draw only "good" matches
+	//cv::Mat img_matches;
+	//drawMatches(image_1, keypoints_1, image_2, keypoints_2,
+	//	good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
+	//	std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+
+	//cv::namedWindow("image", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("image", img_matches);
+	//cv::waitKey();
 
 	// 5. Set ImagePairMatch 
 	match.image1 = image_path_1;
@@ -128,8 +181,12 @@ void CRobustMatcher::FastRobustMatch(const std::string& image_path_1, const std:
 	match.correspondences.clear();
 	for (size_t i = 0; i < good_matches.size(); i++)
 	{
-		cv::Point2f point1 = keypoints_2[good_matches[i].trainIdx].pt;
-		cv::Point2f point2 = keypoints_2[good_matches[i].queryIdx].pt;
+//		LOG(INFO) << "i = " << i;
+		cv::Point2f point1 = keypoints_1[good_matches[i].queryIdx].pt;
+//		LOG(INFO);
+		cv::Point2f point2 = keypoints_2[good_matches[i].trainIdx].pt;
+//		LOG(INFO);
+
 		FeatureCorrespondence feature_co;
 		//feature_co.feature1(0) = point1.x;
 		//feature_co.feature1(1) = point1.y;
@@ -140,9 +197,11 @@ void CRobustMatcher::FastRobustMatch(const std::string& image_path_1, const std:
 		feature_co.feature1.y = point1.y;
 		feature_co.feature2.x = point2.x;
 		feature_co.feature2.y = point2.y;
-
+//		LOG(INFO);
 		match.correspondences.emplace_back(feature_co);
+//		LOG(INFO);
 	}
+	LOG(INFO) << "Ending of CRobustMatcher::FastRobustMatch";
 }
 
 void CRobustMatcher::ComputeKeyPoints(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints)
