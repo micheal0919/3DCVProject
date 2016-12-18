@@ -9,6 +9,7 @@
 #include "TrackBuildTest.h"
 #include "CameraTest.h"
 #include "TriangulationTest.h"
+#include "ReconstructionTest.h"
 
 Test::Test()
 {
@@ -26,7 +27,8 @@ void Test::TestAll()
 //	CHECK(robust_matcher_test()) << "robust matcher test error";
 //	CHECK(track_build_test()) << "track builder test error";
 //	CHECK(camera_test()) << "camera test error";
-	CHECK(triangulate_test());
+//	CHECK(triangulate_test());
+	CHECK(reconstruction_test());
 }
 
 bool Test::surf_test()
@@ -160,5 +162,11 @@ bool Test::camera_test()
 bool Test::triangulate_test()
 {
 	CTriangulationTest test;
+	return test.Test();
+}
+
+bool Test::reconstruction_test()
+{
+	CReconstructionTest test;
 	return test.Test();
 }

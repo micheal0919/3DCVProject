@@ -14,5 +14,6 @@ private:
 	bool track_build_test();
 	bool camera_test();
 	bool triangulate_test();
+	bool reconstruction_test();
 };
 

@@ -167,6 +167,7 @@
     <ClCompile Include="..\Regiestration\ViewGraph.cpp" />
     <ClCompile Include="CameraTest.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ReconstructionTest.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="TestUitls.cpp" />
     <ClCompile Include="TrackBuildTest.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="..\Regiestration\View.h" />
     <ClInclude Include="..\Regiestration\ViewGraph.h" />
     <ClInclude Include="CameraTest.h" />
+    <ClInclude Include="ReconstructionTest.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="TestUitls.h" />
     <ClInclude Include="TrackBuildTest.h" />
