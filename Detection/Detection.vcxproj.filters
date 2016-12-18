@@ -24,12 +24,21 @@
     <ClCompile Include="Detector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Regiestration\RobustMatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CameraPoseTracker\DirectShowVideoGrabber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Detector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\RobustMatcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Regiestration\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

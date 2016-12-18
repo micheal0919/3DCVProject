@@ -61,9 +61,9 @@ namespace
 			const CView *view = reconstruction.View(view_id);
 			cv::Mat img = cv::imread(view->Name());
 			
-			cv::namedWindow("imageshow", cv::WINDOW_AUTOSIZE);
-			cv::imshow("imageshow", img);
-			cv::waitKey();
+			//cv::namedWindow("imageshow", cv::WINDOW_AUTOSIZE);
+			//cv::imshow("imageshow", img);
+			//cv::waitKey();
 
 			std::vector<cv::KeyPoint> kpts;
 			cv::Mat des;

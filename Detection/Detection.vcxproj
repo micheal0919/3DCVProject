@@ -100,7 +100,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\CameraPoseTracker;..\3rdParties;..\3rdParties\DVSL\include;..\3rdParties\OpenCV_2413\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\CameraPoseTracker;..\Regiestration;..\3rdParties;..\3rdParties\DVSL\include;..\3rdParties\OpenCV_2413\include;..\3rdParties\eigen-3.2.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -146,11 +146,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\CameraPoseTracker\DirectShowVideoGrabber.cpp" />
+    <ClCompile Include="..\Regiestration\RobustMatcher.cpp" />
     <ClCompile Include="Detector.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CameraPoseTracker\DirectShowVideoGrabber.h" />
+    <ClInclude Include="..\Regiestration\RobustMatcher.h" />
+    <ClInclude Include="..\Regiestration\Types.h" />
     <ClInclude Include="Detector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

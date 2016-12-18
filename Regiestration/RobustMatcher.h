@@ -2,7 +2,6 @@
 #define __ROBUSTMATCHER_H__
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/nonfree/nonfree.hpp>
 #include "Types.h"
 
 #include <glog/logging.h>
