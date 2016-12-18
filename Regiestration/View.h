@@ -89,7 +89,7 @@ public:
 
 	int NumFeatures() const
 	{
-		m_features.size();
+		return m_features.size();
 	}
 
 	std::vector<TrackId> TrackIds() const

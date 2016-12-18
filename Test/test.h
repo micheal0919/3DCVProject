@@ -15,5 +15,7 @@ private:
 	bool camera_test();
 	bool triangulate_test();
 	bool reconstruction_test();
+	bool view_test();
+
 };
 

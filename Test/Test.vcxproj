@@ -172,6 +172,7 @@
     <ClCompile Include="TestUitls.cpp" />
     <ClCompile Include="TrackBuildTest.cpp" />
     <ClCompile Include="TriangulationTest.cpp" />
+    <ClCompile Include="ViewTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Regiestration\Camera.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="TestUitls.h" />
     <ClInclude Include="TrackBuildTest.h" />
     <ClInclude Include="TriangulationTest.h" />
+    <ClInclude Include="ViewTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
