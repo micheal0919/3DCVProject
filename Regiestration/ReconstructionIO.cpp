@@ -1,10 +1,15 @@
 #include "ReconstructionIO.h"
 
+#include <string>
+#include <vector>
+
 #include <opencv2/opencv.hpp>
 #include <glog/logging.h>
 
+#include "Types.h"
 #include "Track.h"
 #include "View.h"
+#include "RobustMatcher.h"
 
 namespace
 {
@@ -35,6 +40,86 @@ namespace
 			}
 		}
 	}
+
+	void ComputeDescriptorOfEstimatedTracks(const CReconstruction& reconstruction, cv::Mat& descriptors)
+	{
+		LOG(INFO) << "Begninning of ComputeDescriptorOfEstimatedTracks";
+		
+		std::vector<TrackId> track_ids = reconstruction.TrackIds();
+		std::vector<bool> track_flags;
+
+		for (size_t i = 0; i < track_ids.size(); i++)
+		{
+			track_flags.push_back(false);
+		}
+
+		CRobustMatcher matcher;
+
+		std::vector<ViewId> view_ids = reconstruction.ViewIds();
+		for (const ViewId view_id : view_ids)
+		{
+			const CView *view = reconstruction.View(view_id);
+			cv::Mat img = cv::imread(view->Name());
+			
+			cv::namedWindow("imageshow", cv::WINDOW_AUTOSIZE);
+			cv::imshow("imageshow", img);
+			cv::waitKey();
+
+			std::vector<cv::KeyPoint> kpts;
+			cv::Mat des;
+			matcher.ComputeKeyPoints(img, kpts);
+			matcher.ComputeDescriptors(img, kpts, des);
+
+			for (size_t i = 0; i < track_ids.size(); i++)
+			{
+				
+				// if the track descriptor has been added to result, then go to next track
+				if (true == track_flags[i])
+				{
+					continue;
+				}
+
+				const TrackId track_id = track_ids[i];
+				const Feature* feature = view->GetFeature(track_id);
+				// if the view do not reference to the track, then go to the next track
+				if (NULL == feature)
+				{
+					continue;
+				}
+
+				const CTrack* track = reconstruction.Track(track_id);
+				// if the track is not estimated, then set the flags and go to the next track
+				if (!track->IsEstimated())
+				{
+					track_flags[i] = true;
+					continue;
+				}
+
+				for (size_t k = 0; k < kpts.size(); k++)
+				{
+					// if the track references to the view, and the descriptor to the result, and the set the flag
+					if (feature->x == kpts[k].pt.x && feature->y == kpts[k].pt.y)
+					{
+						descriptors.push_back(des.row(k));
+						track_flags[i] = true;
+					}
+				}
+				
+			}
+		}
+
+		LOG(INFO) << "The num of descriptors is " << descriptors.rows;
+
+		for (size_t i = 0; i < track_flags.size(); i++)
+		{
+			if (false == track_flags[i])
+			{
+				LOG(INFO) << "The error num is " << i;
+			}
+		}
+
+		LOG(INFO) << "Endding of ComputeDescriptorOfEstimatedTracks";
+	}
 }
 
 bool WriteReconstruction(const CReconstruction& reconstruction,
@@ -44,6 +129,10 @@ bool WriteReconstruction(const CReconstruction& reconstruction,
 
 	CReconstruction estimated_reconstruction;
 	CreateEstimatedSubreconstruction(reconstruction, &estimated_reconstruction);
+
+	cv::Mat des;
+	ComputeDescriptorOfEstimatedTracks(estimated_reconstruction, des);
+	LOG(INFO);
 
 	std::vector<cv::Point3d> points_3d;
 	std::vector<TrackId> ids = estimated_reconstruction.TrackIds();
@@ -66,6 +155,7 @@ bool WriteReconstruction(const CReconstruction& reconstruction,
 	CHECK(fs.isOpened()) << "Fail to open reconstruction file";
 
 	fs << "points_3d" << points3dmatrix;
+	fs << "descriptors" << des;
 
 	fs.release();
 

@@ -58,13 +58,13 @@ public:
 		std::vector<cv::KeyPoint>& keypoints_frame,
 		const cv::Mat& descriptors_model);
 
-private:
 	// Compute the keypoints of an image
 	void ComputeKeyPoints(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints);
 
 	// Compute the descriptors of an image given its keypoints
 	void ComputeDescriptors(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors);
 
+private:
 	// Clear matches for which NN ratio is > than threshold
 	// return the number of removed points
 	// (corresponding entries being cleared,
