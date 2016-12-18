@@ -11,6 +11,7 @@
 #include "TriangulationTest.h"
 #include "ReconstructionTest.h"
 #include "ViewTest.h"
+#include "TrackTest.h"
 
 Test::Test()
 {
@@ -30,7 +31,8 @@ void Test::TestAll()
 //	CHECK(camera_test()) << "camera test error";
 //	CHECK(triangulate_test());
 //	CHECK(reconstruction_test());
-	CHECK(view_test());
+//	CHECK(view_test());
+	CHECK(track_test());
 }
 
 bool Test::surf_test()
@@ -176,5 +178,11 @@ bool Test::reconstruction_test()
 bool Test::view_test()
 {
 	CViewTest test;
+	return test.Test();
+}
+
+bool Test::track_test()
+{
+	CTrackTest test;
 	return test.Test();
 }

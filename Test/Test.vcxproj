@@ -171,6 +171,7 @@
     <ClCompile Include="test.cpp" />
     <ClCompile Include="TestUitls.cpp" />
     <ClCompile Include="TrackBuildTest.cpp" />
+    <ClCompile Include="TrackTest.cpp" />
     <ClCompile Include="TriangulationTest.cpp" />
     <ClCompile Include="ViewTest.cpp" />
   </ItemGroup>
@@ -200,6 +201,7 @@
     <ClInclude Include="test.h" />
     <ClInclude Include="TestUitls.h" />
     <ClInclude Include="TrackBuildTest.h" />
+    <ClInclude Include="TrackTest.h" />
     <ClInclude Include="TriangulationTest.h" />
     <ClInclude Include="ViewTest.h" />
   </ItemGroup>

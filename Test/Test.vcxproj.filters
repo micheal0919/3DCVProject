@@ -78,6 +78,9 @@
     <ClCompile Include="ViewTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="TrackTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test.h">
@@ -159,6 +162,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ViewTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
