@@ -63,6 +63,7 @@ public:
 private:
 	void EstimateTrackSet(const int start, const int stop);
 	bool EstimateTrack(const TrackId track_id);
+	void reconstruction_test();
 
 	const Options m_options;
 	CReconstruction* m_reconstruction;

@@ -152,6 +152,7 @@
     <ClCompile Include="Reconstruction.cpp" />
     <ClCompile Include="ReconstructionBuilder.cpp" />
     <ClCompile Include="ReconstructionEstimator.cpp" />
+    <ClCompile Include="ReconstructionIO.cpp" />
     <ClCompile Include="RobustMatcher.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="TrackBuilder.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Reconstruction.h" />
     <ClInclude Include="ReconstructionBuilder.h" />
     <ClInclude Include="ReconstructionEstimator.h" />
+    <ClInclude Include="ReconstructionIO.h" />
     <ClInclude Include="RobustMatcher.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="Track.h" />

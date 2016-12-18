@@ -1,6 +1,7 @@
 #include "TrackEstimator.h"
 
 #include <glog/logging.h>
+#include <opencv2/opencv.hpp>
 
 #include "Track.h"
 #include "View.h"
@@ -64,6 +65,10 @@ bool AcceptableReprojectionError(
 		++num_projections;
 	}
 
+	double error = mean_sq_reprojection_error / static_cast<double>(num_projections);
+
+	LOG(INFO) << "reprojection error is " << error << "of track id " << track_id;
+
 	return (mean_sq_reprojection_error / static_cast<double>(num_projections)) <
 		sq_max_reprojection_error_pixels;
 }
@@ -86,6 +91,8 @@ int NumEstimatedViewsObservingTrack(const CReconstruction& reconstruction,
 // Estimate only the tracks supplied by the user.
 CTrackEstimator::Summary CTrackEstimator::EstimateAllTracks() 
 {
+	LOG(INFO) << "CTrackEstimator::EstimateAllTracks()";
+
 	const auto& track_ids = m_reconstruction->TrackIds();
 	std::unordered_set<TrackId> tracks(track_ids.begin(), track_ids.end());
 	return EstimateTracks(tracks);
@@ -94,6 +101,8 @@ CTrackEstimator::Summary CTrackEstimator::EstimateAllTracks()
 CTrackEstimator::Summary CTrackEstimator::EstimateTracks(
 	const std::unordered_set<TrackId>& track_ids) 
 {
+	LOG(INFO) << "Beginning of CTrackEstimator::EstimateTracks";
+
 	m_tracks_to_estimate.clear();
 	m_successfully_estimated_tracks.clear();
 
@@ -159,11 +168,16 @@ CTrackEstimator::Summary CTrackEstimator::EstimateTracks(
 
 	LOG(INFO) << summary.estimated_tracks.size() << " tracks were estimated of "
 		<< summary.num_triangulation_attempts << " possible tracks.";
+
+	LOG(INFO) << "Beginning of CTrackEstimator::EstimateTracks";
+
 	return summary;
 }
 
 void CTrackEstimator::EstimateTrackSet(const int start, const int end) 
 {
+	reconstruction_test();
+
 	for (int i = start; i < end; i++) {
 		EstimateTrack(m_tracks_to_estimate[i]);
 	}
@@ -171,6 +185,10 @@ void CTrackEstimator::EstimateTrackSet(const int start, const int end)
 
 bool CTrackEstimator::EstimateTrack(const TrackId track_id) 
 {
+	LOG(INFO) << "Beginning of CTrackEstimator::EstimateTrack";
+
+	LOG(INFO) << "track id is " << track_id;
+
 	CTrack* track = m_reconstruction->MutableTrack(track_id);
 	CHECK(!track->IsEstimated()) << "Track " << track_id
 		<< " is already estimated.";
@@ -187,11 +205,13 @@ bool CTrackEstimator::EstimateTrack(const TrackId track_id)
 	// Check the angle between views.
 	if (!SufficientTriangulationAngle(ray_directions,
 		m_options.min_triangulation_angle_degrees)) {
+		LOG(WARNING) << "insufficient triangulation angle";
 		return false;
 	}
 
 	// Triangulate the track.
 	if (!TriangulateMidpoint(origins, ray_directions, track->MutablePoint())) {
+		LOG(WARNING) << "TriangulateMidpoint failed";
 		return false;
 	}
 
@@ -215,9 +235,60 @@ bool CTrackEstimator::EstimateTrack(const TrackId track_id)
 	if (!AcceptableReprojectionError(*m_reconstruction,
 		track_id,
 		sq_max_reprojection_error_pixels)) {
-		return false;
+		LOG(WARNING) << "reprojection error is NOT acceptable";
+//		return false;
 	}
 
 	track->SetEstimated(true);
+
+	LOG(INFO) << "Endding of CTrackEstimator::EstimateTrack";
+
 	return true;
+}
+
+void CTrackEstimator::reconstruction_test()
+{
+	LOG(INFO) << "Beginnig of CTrackEstimator::reconstruction_test";
+
+	int num_views = m_reconstruction->NumViews();
+	LOG(INFO) << "The num of views is " << num_views;
+
+	std::vector<ViewId> view_ids = m_reconstruction->ViewIds();
+	for (size_t i = 0; i < view_ids.size(); i++)
+	{
+		LOG(INFO) << "iterator i = " << i;
+		LOG(INFO) << "view is = " << view_ids[i];
+		const CView *view = m_reconstruction->View(view_ids[i]);
+		LOG(INFO) << "view name is " << view->Name();
+//		LOG(INFO) << "camera orientation in the view is " << view->CameraOrientationMatrix();
+//		LOG(INFO) << "camera postion in the view is " << view->CameraPostion();
+		std::vector<TrackId> track_ids = view->TrackIds();
+		std::vector<Feature> features;
+		for (const TrackId track_id : track_ids)
+		{
+			const Feature* feature = view->GetFeature(track_id);
+			features.emplace_back(*feature);
+		}
+
+		cv::Mat img = cv::imread(view->Name());
+		
+		//cv::namedWindow("imageshow", cv::WINDOW_AUTOSIZE);
+		//cv::imshow("imageshow", img);
+		//cv::waitKey();
+
+		int myradius = 5;
+		for (int i = 0; i < features.size(); i++)
+		{
+			cv::circle(img, cvPoint(features[i].x, features[i].y), myradius, CV_RGB(100, 0, 0), -1, 8, 0);
+		}
+			
+		//cv::namedWindow("imageshow", cv::WINDOW_AUTOSIZE);
+		//cv::imshow("imageshow", img);
+		//cv::waitKey();
+
+	}
+
+
+
+	LOG(INFO) << "Endding of CTrackEstimator::reconstruction_test";
 }

@@ -73,7 +73,11 @@ CReconstruction* CreateEstimatedSubreconstruction(const CReconstruction& input_r
 
 void RemoveEstimatedViewsAndTracks(CReconstruction* reconstruction, CViewGraph* view_graph) 
 {
+	LOG(INFO) << "Beginning of RemoveEstimatedViewsAndTracks";
+
 	const auto& view_ids = reconstruction->ViewIds();
+	LOG(INFO) << "The num of views is " << view_ids.size();
+
 	for (const ViewId view_id : view_ids) {
 		const CView* view = reconstruction->View(view_id);
 		if (view == nullptr) {
@@ -87,6 +91,8 @@ void RemoveEstimatedViewsAndTracks(CReconstruction* reconstruction, CViewGraph* 
 	}
 
 	const auto& track_ids = reconstruction->TrackIds();
+	LOG(INFO) << "The num of tracks is " << track_ids.size();
+
 	for (const TrackId track_id : track_ids) {
 		const CTrack* track = reconstruction->Track(track_id);
 		if (track == nullptr) {
@@ -97,6 +103,8 @@ void RemoveEstimatedViewsAndTracks(CReconstruction* reconstruction, CViewGraph* 
 			reconstruction->RemoveTrack(track_id);
 		}
 	}
+
+	LOG(INFO) << "Endding of RemoveEstimatedViewsAndTracks";
 }
 
 }
@@ -188,6 +196,8 @@ bool CReconstructionBuilder::ExtractAndMatchFeatures()
 
 bool CReconstructionBuilder::BuildReconstruction(std::vector<CReconstruction*>* reconstructions)
 {
+	LOG(INFO) << "Beginning of CReconstructionBuilder::BuildReconstruction";
+
 	CHECK_GE(m_view_graph->NumViews(), 2) << "At least 2 images must be provided "
 		"in order to create a "
 		"reconstruction.";
@@ -239,6 +249,7 @@ bool CReconstructionBuilder::BuildReconstruction(std::vector<CReconstruction*>* 
 		// from the remaining unestimated parts.
 		reconstructions->emplace_back(CreateEstimatedSubreconstruction(*m_reconstruction));
 		RemoveEstimatedViewsAndTracks(m_reconstruction.get(), m_view_graph.get());
+		LOG(INFO);
 
 		// Exit after the first reconstruction estimation if only the single largest
 		// reconstruction is desired.
@@ -250,7 +261,12 @@ bool CReconstructionBuilder::BuildReconstruction(std::vector<CReconstruction*>* 
 			LOG(INFO) << "No more reconstructions can be estimated.";
 			return reconstructions->size() > 0;
 		}
+		LOG(INFO);
+
 	}
+
+	LOG(INFO) << "Endding of CReconstructionBuilder::BuildReconstruction";
+
 	return true;
 
 }

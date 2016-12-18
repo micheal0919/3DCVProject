@@ -35,9 +35,6 @@ void SwapCameras(TwoViewInfo* twoview_info);
 bool ImageInfoToCameraInfo(const ImageInfo& info, CameraIntrinsicsPrior& intrinsics,
 	Eigen::Matrix3d& camera_orientation_matrix, Eigen::Vector3d& camera_postion);
 
-bool WriteReconstruction(const CReconstruction& reconstruction,
-	const std::string& output_file);
-
 bool ReadReconstruction(const std::string& input_file, std::vector<cv::Point3d>& points_3d);
 
 #endif // __UTIL_H__

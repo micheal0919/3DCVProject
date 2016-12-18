@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "ReconstructionBuilder.h"
+#include "ReconstructionIO.h"
 
 using namespace std;
 
@@ -16,7 +17,7 @@ DEFINE_string(image_info_file_path, "../data/images/image_infos.xml", "image_inf
 DEFINE_int32(num_image, 5, "num_image");
 DEFINE_int32(num_keypoint, 200, "num_keypoint of each image");
 
-DEFINE_string(output_reconstruction, "../", "output_reconstruction");
+DEFINE_string(output_reconstruction, "../data/images/3DReconstruction.yml", "output_reconstruction");
 
 int main(int argc, char* argv[])
 {

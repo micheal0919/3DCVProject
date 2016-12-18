@@ -60,6 +60,9 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ReconstructionIO.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test.h">
@@ -123,6 +126,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ImageInfoIO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ReconstructionIO.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
