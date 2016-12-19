@@ -14,7 +14,7 @@ bool WriteImageInfoToFile(const std::string& file_path, const std::vector<ImageI
 	myDocument->LinkEndChild(RootElement);
 
 	// make double more prcise
-	const int magnitude = 10000;
+	const int magnitude = 1;
 	RootElement->SetAttribute("magnitude", magnitude);
 
 	for (size_t i = 0; i < infos.size(); i++)

@@ -134,12 +134,21 @@ bool CPoseEstimator::EstimatePoses()
 	
 	double K_matrix[9];
 	m_marker_tracker.getKMatrix(K_matrix);
-	for (int i = 0; i < 9; i++)
+
+	for (unsigned int i = 0; i<3; i++)
 	{
-		int x = i / 3;
-		int y = i % 3;
-		K_mat.at<double>(x, y) = K_matrix[i];
+		for (unsigned int j = 0; j<3; j++)
+		{
+			K_mat.at<double>(i, j) = K_matrix[i + j * 3];
+		}
 	}
+
+	//for (int i = 0; i < 9; i++)
+	//{
+	//	int x = i / 3;
+	//	int y = i % 3;
+	//	K_mat.at<double>(x, y) = K_matrix[i];
+	//}
 	
 
 	CvMat* Kmat = cvCreateMat(3, 3, CV_64FC1);

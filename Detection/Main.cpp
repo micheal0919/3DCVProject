@@ -3,12 +3,7 @@
 
 #include "Detector.h"
 
-DEFINE_string(option, "test", "the option of the project neeed to do, pose, reconstruction, detection");
-DEFINE_string(camera_intrin_file_path, "../data/calibration/camera_params.txt", "camera_intrin_file_path");
-DEFINE_string(marker_world_file_path, "../data/markers/worldflat-1.xml", "marker_world_file_path");
-DEFINE_string(image_path, "../data/images/", "image_path");
-DEFINE_string(image_info_file_path, "../data/images/image_infos.xml", "image_info_file_path");
-DEFINE_int32(num_image, 5, "num_image");
+DEFINE_string(input_reconstruction, "../data/images/3DReconstruction.yml", "output_reconstruction");
 
 int main(int argc, char* argv[])
 {
@@ -26,8 +21,15 @@ int main(int argc, char* argv[])
 	LOG(INFO) << "Detect camera poses";
 
 	CDetector::Options options;
+	options.yml_read_path = FLAGS_input_reconstruction;
 	CDetector detector(options);
 	
+	if (!detector.Init())
+	{
+		LOG(ERROR) << "Fail to init detector";
+		return -1;
+	}
+
 	if (!detector.Detect())
 	{
 		LOG(ERROR) << "error in detection";

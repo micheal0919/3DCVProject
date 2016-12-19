@@ -28,6 +28,8 @@ public:
 private:
 	bool ReadYmlFile();
 	bool GetCameraIntrinscis();
+	void draw2DPoints(cv::Mat image, std::vector<cv::Point2d> &list_points, cv::Scalar color);
+
 
 private:
 	Options m_options;
