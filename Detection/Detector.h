@@ -28,8 +28,18 @@ public:
 private:
 	bool ReadYmlFile();
 	bool GetCameraIntrinscis();
-	void draw2DPoints(cv::Mat image, std::vector<cv::Point2d> &list_points, cv::Scalar color);
 
+	// Draw only the 2D points
+	void Draw2DPoints(cv::Mat& image, std::vector<cv::Point2d> &list_points, cv::Scalar color);
+	
+	// Draw a coordinate into the image
+	void DrawCoordinate(cv::Mat& image, const cv::Mat& rvec, const cv::Mat& tvec);
+	
+	// Draw an arrow into the image
+	void DrawArrow(cv::Mat image, cv::Point2d p, cv::Point2d q, cv::Scalar color, int arrowMagnitude = 9, int thickness = 1, int line_type = 8, int shift = 0);
+
+	// Draw the 3D coordinate axes
+	void Draw3DCoordinateAxes(cv::Mat image, const std::vector<cv::Point2d> &list_points2d);
 
 private:
 	Options m_options;

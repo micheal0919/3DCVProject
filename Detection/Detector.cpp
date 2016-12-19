@@ -5,7 +5,13 @@
 #include <glog/logging.h>
 #include <opencv2/opencv.hpp>
 
-
+namespace
+{
+	// For circles
+	int lineType = 8;
+	int radius = 4;
+	double thickness_circ = -1;
+}
 
 CDetector::CDetector(const CDetector::Options& options)
 :m_options(options)
@@ -80,7 +86,7 @@ bool CDetector::Detect()
 		}
 
 		// Draw outliers
-		draw2DPoints(live_show, list_points2d_scene_match, cv::Scalar(0, 0, 255));
+		Draw2DPoints(live_show, list_points2d_scene_match, cv::Scalar(0, 0, 255));
 
 
 		cv::Mat inliers_idx;
@@ -99,9 +105,13 @@ bool CDetector::Detect()
 
 			LOG(INFO) << "The rotation vetor of camera pose is " << rvec;
 			LOG(INFO) << "The translation vector of camera pose is " << tvec;
+			DrawCoordinate(live_show, rvec, tvec);
+			LOG(INFO);
 		}
+		LOG(INFO);
 
 		cv::imshow("imgshow", live_show);
+		LOG(INFO);
 	}
 
 	LOG(INFO) << "Beginnig of CDetector::Detect";
@@ -150,12 +160,8 @@ bool CDetector::GetCameraIntrinscis()
 }
 
 // Draw only the 2D points
-void CDetector::draw2DPoints(cv::Mat image, std::vector<cv::Point2d> &list_points, cv::Scalar color)
+void CDetector::Draw2DPoints(cv::Mat& image, std::vector<cv::Point2d> &list_points, cv::Scalar color)
 {
-	// For circles
-	int lineType = 8;
-	int radius = 4;
-
 	for (size_t i = 0; i < list_points.size(); i++)
 	{
 		cv::Point2d point_2d = list_points[i];
@@ -163,4 +169,156 @@ void CDetector::draw2DPoints(cv::Mat image, std::vector<cv::Point2d> &list_point
 		// Draw Selected points
 		cv::circle(image, point_2d, radius, color, -1, lineType);
 	}
+}
+
+void CDetector::DrawCoordinate(cv::Mat& image, const cv::Mat& rvec, const cv::Mat& tvec)
+{
+	LOG(INFO);
+	const double scale = 30.0;
+
+	cv::Mat point0(3, 1, CV_64FC1);
+	point0.at<double>(0, 0) = 0;
+	point0.at<double>(1, 0) = 0;
+	point0.at<double>(2, 0) = 0;
+
+	cv::Mat pointX(3, 1, CV_64FC1);
+	pointX.at<double>(0, 0) = scale;
+	pointX.at<double>(1, 0) = 0;
+	pointX.at<double>(2, 0) = 0;
+
+	cv::Mat pointY(3, 1, CV_64FC1);
+	pointY.at<double>(0, 0) = 0;
+	pointY.at<double>(1, 0) = scale;
+	pointY.at<double>(2, 0) = 0;
+
+	cv::Mat pointZ(3, 1, CV_64FC1);
+	pointZ.at<double>(0, 0) = 0;
+	pointZ.at<double>(1, 0) = 0;
+	pointZ.at<double>(2, 0) = scale;
+
+
+	cv::Mat rmat(3, 3, CV_64FC1);
+	cv::Rodrigues(rvec, rmat);
+	LOG(INFO) << "rvec = " << rvec;
+	LOG(INFO) << "rmat = " << rmat;
+
+	cv::Mat projected0(3, 1, CV_64FC1);
+	projected0 = rmat * point0;
+	projected0 = projected0 + tvec;
+	projected0 = m_K_mat * projected0;
+	LOG(INFO) << "projected0 = " << projected0;
+	double tmp_scale = projected0.at<double>(2, 0);
+	if (0 == tmp_scale)
+	{
+		tmp_scale = 1;
+	}
+	projected0 = projected0 / tmp_scale;
+	LOG(INFO);
+
+	cv::Mat projectedX(3, 1, CV_64FC1);
+	projectedX = rmat * pointX;
+	projectedX = projectedX + tvec;
+	projectedX = m_K_mat * projectedX;
+	tmp_scale = projectedX.at<double>(2, 0);
+	if (0 == tmp_scale)
+	{
+		tmp_scale = 1;
+	}
+	projectedX = projectedX / tmp_scale;
+
+	cv::Mat projectedY(3, 1, CV_64FC1);
+	projectedY = rmat * pointY;
+	projectedY = projectedY + tvec;
+	projectedY = m_K_mat * projectedY;
+	tmp_scale = projectedY.at<double>(2, 0);
+	if (0 == tmp_scale)
+	{
+		tmp_scale = 1;
+	}
+	projectedY = projectedY / tmp_scale;
+
+	cv::Mat projectedZ(3, 1, CV_64FC1);
+	projectedZ = rmat * pointZ;
+	projectedZ = projectedZ + tvec;
+	projectedZ = m_K_mat * projectedZ;
+	tmp_scale = projectedZ.at<double>(2, 0);
+	if (0 == tmp_scale)
+	{
+		tmp_scale = 1;
+	}
+	projectedZ = projectedZ / tmp_scale;
+
+	cv::Point2d point_0;
+	point_0.x = projected0.at<double>(0, 0);
+	point_0.y = projected0.at<double>(1, 0);
+
+	cv::Point2d point_x;
+	point_x.x = projectedX.at<double>(0, 0);
+	point_x.y = projectedX.at<double>(1, 0);
+	
+	cv::Point2d point_y;
+	point_y.x = projectedY.at<double>(0, 0);
+	point_y.y = projectedY.at<double>(1, 0);
+
+	cv::Point2d point_z;
+	point_z.x = projectedZ.at<double>(0, 0);
+	point_z.y = projectedZ.at<double>(1, 0);
+
+	std::vector<cv::Point2d> list_points2d;
+	list_points2d.emplace_back(point_0);
+	list_points2d.emplace_back(point_x);
+	list_points2d.emplace_back(point_y);
+	list_points2d.emplace_back(point_z);
+
+	LOG(INFO);
+
+	Draw3DCoordinateAxes(image, list_points2d);
+	
+	LOG(INFO);
+}
+
+// Draw an arrow into the image
+void CDetector::DrawArrow(cv::Mat image, cv::Point2d p, cv::Point2d q, cv::Scalar color, int arrowMagnitude, int thickness, int line_type, int shift)
+{
+	LOG(INFO);
+
+	//Draw the principle line
+	cv::line(image, p, q, color, thickness, line_type, shift);
+	const double PI = CV_PI;
+	//compute the angle alpha
+	double angle = atan2((double)p.y - q.y, (double)p.x - q.x);
+	//compute the coordinates of the first segment
+	p.x = (int)(q.x + arrowMagnitude * cos(angle + PI / 4));
+	p.y = (int)(q.y + arrowMagnitude * sin(angle + PI / 4));
+	//Draw the first segment
+	cv::line(image, p, q, color, thickness, line_type, shift);
+	//compute the coordinates of the second segment
+	p.x = (int)(q.x + arrowMagnitude * cos(angle - PI / 4));
+	p.y = (int)(q.y + arrowMagnitude * sin(angle - PI / 4));
+	//Draw the second segment
+	cv::line(image, p, q, color, thickness, line_type, shift);
+	LOG(INFO);
+}
+
+// Draw the 3D coordinate axes
+void CDetector::Draw3DCoordinateAxes(cv::Mat image, const std::vector<cv::Point2d> &list_points2d)
+{
+	LOG(INFO);
+
+	cv::Scalar red(0, 0, 255);
+	cv::Scalar green(0, 255, 0);
+	cv::Scalar blue(255, 0, 0);
+	cv::Scalar black(0, 0, 0);
+
+	cv::Point2i origin = list_points2d[0];
+	cv::Point2i pointX = list_points2d[1];
+	cv::Point2i pointY = list_points2d[2];
+	cv::Point2i pointZ = list_points2d[3];
+
+	DrawArrow(image, origin, pointX, red, 9, 2);
+	DrawArrow(image, origin, pointY, blue, 9, 2);
+	DrawArrow(image, origin, pointZ, green, 9, 2);
+	cv::circle(image, origin, radius / 2, black, -1, lineType);
+	LOG(INFO);
+
 }
