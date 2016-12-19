@@ -11,26 +11,11 @@ class CTrackEstimator
 {
 public:
 	struct Options {
-		// Number of threads for multithreading.
-		int num_threads = 1;
-
-		// Maximum reprojection error for successful triangulation.
 		double max_acceptable_reprojection_error_pixels = 5.0;
-
-		// Minimum triangulation angle between two views required for
-		// triangulation. For N-View triangulation we require that at least one pair
-		// of views has this an angle this large.
 		double min_triangulation_angle_degrees = 3.0;
 
-		// Perform bundle adjustment on the track as soon as a position is
-		// estimated.
 		bool bundle_adjustment = false;
 		BundleAdjustmentOptions ba_options;
-
-		// For thread-level parallelism, it is better to estimate a small fixed
-		// number of tracks per thread worker instead of 1 track per worker. This
-		// number controls how many points are estimated per worker.
-		int multithreaded_step_size = 100;
 	};
 
 	struct Summary {
@@ -63,6 +48,16 @@ public:
 private:
 	void EstimateTrackSet(const int start, const int stop);
 	bool EstimateTrack(const TrackId track_id);
+	
+	// estimate tracks using TriangulateMidpoint algorithm
+	bool EstimateTrackMidpoint(const TrackId track_id);
+	
+	// estimate tracks using TriangulateNViewSVD algorithm
+	bool EstimateTrackNViewSVD(const TrackId track_id);
+
+	// estimate tracks using TriangulateNView algorithm
+	bool EstimateTrackNView(const TrackId track_id);
+	
 	void reconstruction_test();
 
 	const Options m_options;

@@ -60,7 +60,7 @@ bool AcceptableReprojectionError(
 		if (camera.ProjectPoint(track.Point(), &reprojection) < 0) 
 		{
 			LOG(INFO);
-			return false;
+//			return false;
 		}
 		Eigen::Vector2d pixel(feature->x, feature->y);
 		mean_sq_reprojection_error += (pixel - reprojection).squaredNorm();
@@ -69,7 +69,7 @@ bool AcceptableReprojectionError(
 
 	double error = mean_sq_reprojection_error / static_cast<double>(num_projections);
 
-	LOG(INFO) << "reprojection error is " << error << "of track id " << track_id;
+	LOG(INFO) << "reprojection error is " << error << " of track id " << track_id;
 
 	return (mean_sq_reprojection_error / static_cast<double>(num_projections)) <
 		sq_max_reprojection_error_pixels;
@@ -135,27 +135,6 @@ CTrackEstimator::Summary CTrackEstimator::EstimateTracks(
 		return summary;
 	}
 
-	// Estimate the tracks in parallel. Instead of 1 threadpool worker per track,
-	// we let each worker estimate a fixed number of tracks at a time (e.g. 20
-	// tracks). Since estimating the tracks is so fast, this strategy is better
-	// helps speed up multithreaded estimation by reducing the overhead of
-	// starting/stopping threads.
-	//const int num_threads = std::min(
-	//	m_options.num_threads, static_cast<int>(m_tracks_to_estimate.size()));
-	//const int interval_step =
-	//	std::min(m_options.multithreaded_step_size,
-	//	static_cast<int>(m_tracks_to_estimate.size()) / num_threads);
-
-	//std::unique_ptr<ThreadPool> pool(new ThreadPool(num_threads));
-	//for (int i = 0; i < tracks_to_estimate_.size(); i += interval_step) {
-	//	const int end_interval = std::min(
-	//		static_cast<int>(tracks_to_estimate_.size()), i + interval_step);
-	//	pool->Add(&TrackEstimator::EstimateTrackSet, this, i, end_interval);
-	//}
-
-	//// Wait for all tracks to be estimated.
-	//pool.reset(nullptr);
-
 	EstimateTrackSet(0, m_tracks_to_estimate.size());
 
 	// Find the tracks that were newly estimated.
@@ -191,6 +170,30 @@ bool CTrackEstimator::EstimateTrack(const TrackId track_id)
 
 	LOG(INFO) << "track id is " << track_id;
 
+	//if (!EstimateTrackMidpoint(track_id))
+	//{
+	//	LOG(ERROR) << "fail to estimate track with TriangulateMidpoint algorithm";
+	//	return false;
+	//}
+
+	if (!EstimateTrackNViewSVD(track_id))
+	{
+		LOG(ERROR) << "fail to estimate track with TriangulateMidpoint algorithm";
+//		return false;
+	}
+
+	LOG(INFO) << "Endding of CTrackEstimator::EstimateTrack";
+
+	return true;
+}
+
+// estimate tracks using TriangulateMidpoint algorithm
+bool CTrackEstimator::EstimateTrackMidpoint(const TrackId track_id)
+{
+	LOG(INFO) << "Beignning of CTrackEstimator::EstimateTrackMidpoint";
+
+	LOG(INFO) << "track id is " << track_id;
+
 	CTrack* track = m_reconstruction->MutableTrack(track_id);
 	CHECK(!track->IsEstimated()) << "Track " << track_id
 		<< " is already estimated.";
@@ -205,30 +208,18 @@ bool CTrackEstimator::EstimateTrack(const TrackId track_id)
 		&ray_directions);
 
 	// Check the angle between views.
-	if (!SufficientTriangulationAngle(ray_directions, m_options.min_triangulation_angle_degrees)) 
+	if (!SufficientTriangulationAngle(ray_directions, m_options.min_triangulation_angle_degrees))
 	{
 		LOG(WARNING) << "insufficient triangulation angle";
 		return false;
 	}
 
 	// Triangulate the track.
-	if (!TriangulateMidpoint(origins, ray_directions, track->MutablePoint())) 
+	if (!TriangulateMidpoint(origins, ray_directions, track->MutablePoint()))
 	{
 		LOG(WARNING) << "TriangulateMidpoint failed";
 		return false;
 	}
-
-	// Bundle adjust the track. The 2-view triangulation method is optimal so we
-	// do not need to run BA for that case.
-	//if (options_.bundle_adjustment) {
-	//	track->SetEstimated(true);
-	//	const BundleAdjustmentSummary summary =
-	//		BundleAdjustTrack(options_.ba_options, track_id, reconstruction_);
-	//	track->SetEstimated(false);
-	//	if (!summary.success) {
-	//		return false;
-	//	}
-	//}
 
 	// Ensure the reprojection errors are acceptable.
 	const double sq_max_reprojection_error_pixels =
@@ -239,13 +230,128 @@ bool CTrackEstimator::EstimateTrack(const TrackId track_id)
 		track_id,
 		sq_max_reprojection_error_pixels)) {
 		LOG(WARNING) << "reprojection error is NOT acceptable";
+		//		return false;
+	}
+
+	track->SetEstimated(true);
+
+	LOG(INFO) << "Endding of CTrackEstimator::EstimateTrackMidpoint";
+
+	return true;
+}
+
+// estimate tracks using TriangulateNViewSVD algorithm
+bool CTrackEstimator::EstimateTrackNViewSVD(const TrackId track_id)
+{
+	LOG(INFO) << "Beginning of CTrackEstimator::EstimateTrackNViewSVD";
+
+	std::vector<Matrix3x4d> poses;
+	std::vector<Eigen::Vector2d> points;
+
+	CTrack* track = m_reconstruction->MutableTrack(track_id);
+	for (const ViewId view_id : track->ViewIds()) 
+	{
+		const CView* view = m_reconstruction->View(view_id);
+
+		// Skip this view if it does not exist or has not been estimated yet.
+		if (view == nullptr || !view->IsEstimated()) {
+			continue;
+		}
+
+
+		const Feature* feature = view->GetFeature(track_id);
+		CHECK(feature) << "fail to get the featue in this view";
+
+		Eigen::Vector2d point(feature->x, feature->y);
+		points.emplace_back(point);
+
+		Matrix3x4d pose;
+		view->Camera().GetProjectionMatrix(&pose);
+		poses.emplace_back(pose);
+
+	}
+
+	// Triangulate the track.
+	if (!TriangulateNViewSVD(poses, points, track->MutablePoint()))
+	{
+		LOG(WARNING) << "TriangulateMidpoint failed";
+		return false;
+	}
+
+	// Ensure the reprojection errors are acceptable.
+	const double sq_max_reprojection_error_pixels =
+		m_options.max_acceptable_reprojection_error_pixels *
+		m_options.max_acceptable_reprojection_error_pixels;
+
+	if (!AcceptableReprojectionError(*m_reconstruction,
+		track_id,
+		sq_max_reprojection_error_pixels)) 
+	{
+		LOG(WARNING) << "reprojection error is NOT acceptable";
 //		return false;
 	}
 
 	track->SetEstimated(true);
 
-	LOG(INFO) << "Endding of CTrackEstimator::EstimateTrack";
+	LOG(INFO) << "Endding of CTrackEstimator::EstimateTrackNViewSVD";
 
+	return true;
+}
+
+// estimate tracks using TriangulateNView algorithm
+bool CTrackEstimator::EstimateTrackNView(const TrackId track_id)
+{
+	LOG(INFO) << "Beginning of CTrackEstimator::EstimateTrackNView";
+
+	std::vector<Matrix3x4d> poses;
+	std::vector<Eigen::Vector2d> points;
+
+	CTrack* track = m_reconstruction->MutableTrack(track_id);
+	for (const ViewId view_id : track->ViewIds())
+	{
+		const CView* view = m_reconstruction->View(view_id);
+
+		// Skip this view if it does not exist or has not been estimated yet.
+		if (view == nullptr || !view->IsEstimated()) {
+			continue;
+		}
+
+
+		const Feature* feature = view->GetFeature(track_id);
+		CHECK(feature) << "fail to get the featue in this view";
+
+		Eigen::Vector2d point(feature->x, feature->y);
+		points.emplace_back(point);
+
+		Matrix3x4d pose;
+		view->Camera().GetProjectionMatrix(&pose);
+		poses.emplace_back(pose);
+
+	}
+
+	// Triangulate the track.
+	if (!TriangulateNView(poses, points, track->MutablePoint()))
+	{
+		LOG(WARNING) << "TriangulateMidpoint failed";
+		return false;
+	}
+
+	// Ensure the reprojection errors are acceptable.
+	const double sq_max_reprojection_error_pixels =
+		m_options.max_acceptable_reprojection_error_pixels *
+		m_options.max_acceptable_reprojection_error_pixels;
+
+	if (!AcceptableReprojectionError(*m_reconstruction,
+		track_id,
+		sq_max_reprojection_error_pixels))
+	{
+		LOG(WARNING) << "reprojection error is NOT acceptable";
+		//		return false;
+	}
+
+	track->SetEstimated(true);
+
+	LOG(INFO) << "Endding of CTrackEstimator::EstimateTrackNView";
 	return true;
 }
 
