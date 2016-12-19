@@ -57,7 +57,9 @@ bool AcceptableReprojectionError(
 		const CCamera& camera = view->Camera();
 		const Feature* feature = view->GetFeature(track_id);
 		Eigen::Vector2d reprojection;
-		if (camera.ProjectPoint(track.Point(), &reprojection) < 0) {
+		if (camera.ProjectPoint(track.Point(), &reprojection) < 0) 
+		{
+			LOG(INFO);
 			return false;
 		}
 		Eigen::Vector2d pixel(feature->x, feature->y);
@@ -203,14 +205,15 @@ bool CTrackEstimator::EstimateTrack(const TrackId track_id)
 		&ray_directions);
 
 	// Check the angle between views.
-	if (!SufficientTriangulationAngle(ray_directions,
-		m_options.min_triangulation_angle_degrees)) {
+	if (!SufficientTriangulationAngle(ray_directions, m_options.min_triangulation_angle_degrees)) 
+	{
 		LOG(WARNING) << "insufficient triangulation angle";
 		return false;
 	}
 
 	// Triangulate the track.
-	if (!TriangulateMidpoint(origins, ray_directions, track->MutablePoint())) {
+	if (!TriangulateMidpoint(origins, ray_directions, track->MutablePoint())) 
+	{
 		LOG(WARNING) << "TriangulateMidpoint failed";
 		return false;
 	}
@@ -260,6 +263,23 @@ void CTrackEstimator::reconstruction_test()
 		LOG(INFO) << "view is = " << view_ids[i];
 		const CView *view = m_reconstruction->View(view_ids[i]);
 		LOG(INFO) << "view name is " << view->Name();
+		LOG(INFO) << "camera focal_length = " << view->Camera().FocalLength();
+		LOG(INFO) << "camera AspectRatio = " << view->Camera().AspectRatio();
+		LOG(INFO) << "camera PrincipalPointX = " << view->Camera().PrincipalPointX();
+		LOG(INFO) << "camera PrincipalPointY = " << view->Camera().PrincipalPointY();
+
+		LOG(INFO) << "camera postion is " << view->CameraPostion()(0) << " " << view->CameraPostion()(1) << " " << view->CameraPostion()(2);
+		LOG(INFO) << "camera ratation matrix is " 
+			<< view->CameraOrientationMatrix()(0, 0) << " "
+			<< view->CameraOrientationMatrix()(0, 1) << " "
+			<< view->CameraOrientationMatrix()(0, 2) << " "
+			<< view->CameraOrientationMatrix()(1, 0) << " "
+			<< view->CameraOrientationMatrix()(1, 1) << " "
+			<< view->CameraOrientationMatrix()(1, 2) << " "
+			<< view->CameraOrientationMatrix()(2, 0) << " "
+			<< view->CameraOrientationMatrix()(2, 1) << " "
+			<< view->CameraOrientationMatrix()(2, 2) << " ";
+
 //		LOG(INFO) << "camera orientation in the view is " << view->CameraOrientationMatrix();
 //		LOG(INFO) << "camera postion in the view is " << view->CameraPostion();
 		std::vector<TrackId> track_ids = view->TrackIds();

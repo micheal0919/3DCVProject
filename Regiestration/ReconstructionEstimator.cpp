@@ -1,6 +1,10 @@
 #include "ReconstructionEstimator.h"
 
-#include "glog/logging.h"
+#include <iostream>
+
+#include <glog/logging.h>
+#include <Eigen/Core>
+#include <Eigen/Dense>
 
 #include "Camera.h"
 #include "View.h"
@@ -408,6 +412,32 @@ bool CGlobalReconstructionEstimator::EstimatePosition()
 		view->MutableCamera()->SetPosition(view->CameraPostion());
 		view->MutableCamera()->SetOrientationFromRotationMatrix(view->CameraOrientationMatrix());
 		view->SetEstimated(true);
+
+		LOG(INFO) << "view->Name() = " << view->Name();
+		LOG(INFO) << "camera postion is " << view->CameraPostion()(0) << " " << view->CameraPostion()(1) << " " << view->CameraPostion()(2);
+		LOG(INFO) << "camera ratation matrix is "
+			<< view->CameraOrientationMatrix()(0, 0) << " "
+			<< view->CameraOrientationMatrix()(0, 1) << " "
+			<< view->CameraOrientationMatrix()(0, 2) << " "
+			<< view->CameraOrientationMatrix()(1, 0) << " "
+			<< view->CameraOrientationMatrix()(1, 1) << " "
+			<< view->CameraOrientationMatrix()(1, 2) << " "
+			<< view->CameraOrientationMatrix()(2, 0) << " "
+			<< view->CameraOrientationMatrix()(2, 1) << " "
+			<< view->CameraOrientationMatrix()(2, 2) << " ";
+
+		LOG(INFO) << "camera postion is " << view->Camera().GetPosition()(0) << " " << view->Camera().GetPosition()(1) << " " << view->Camera().GetPosition()(2);
+		LOG(INFO) << "camera ratation matrix is "
+			<< view->Camera().GetOrientationAsRotationMatrix()(0, 0) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(0, 1) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(0, 2) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(1, 0) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(1, 1) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(1, 2) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(2, 0) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(2, 1) << " "
+			<< view->Camera().GetOrientationAsRotationMatrix()(2, 2) << " ";
+
 	}
 	LOG(INFO);
 
@@ -423,6 +453,8 @@ bool CGlobalReconstructionEstimator::EstimatePosition()
 	}
 	
 	LOG(INFO) << "Beginning of CGlobalReconstructionEstimator::EstimatePosition";
+
+
 
 	return true;
 }

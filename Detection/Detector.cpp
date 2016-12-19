@@ -138,10 +138,10 @@ bool CDetector::GetCameraIntrinscis()
 	LOG(INFO) << "Beginning of CDetector::GetCameraIntrinscis";
 
 	m_K_mat = cv::Mat::zeros(3, 3, CV_64FC1);
-	m_K_mat.at<double>(0, 0) = 0.97172;       //      [ fx   0  cx ]
-	m_K_mat.at<double>(1, 1) = 1.29811;       //      [  0  fy  cy ]
-	m_K_mat.at<double>(0, 2) = 0.510408;       //      [  0   0   1 ]
-	m_K_mat.at<double>(1, 2) = 0.489991;
+	m_K_mat.at<double>(0, 0) = 621.900800;       //      [ fx   0  cx ]
+	m_K_mat.at<double>(1, 1) = 326.661120;       //      [  0  fy  cy ]
+	m_K_mat.at<double>(0, 2) = 467.319600;       //      [  0   0   1 ]
+	m_K_mat.at<double>(1, 2) = 176.396760;
 	m_K_mat.at<double>(2, 2) = 1;
 
 	LOG(INFO) << "Endding of CDetector::GetCameraIntrinscis";

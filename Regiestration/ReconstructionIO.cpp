@@ -41,7 +41,7 @@ namespace
 		}
 	}
 
-	void ComputeDescriptorOfEstimatedTracks(const CReconstruction& reconstruction, cv::Mat& descriptors)
+	void ComputeDescriptorOfEstimatedTracks(const CReconstruction& reconstruction, cv::Mat& descriptors, std::vector<cv::Point3d>& points_3d)
 	{
 		LOG(INFO) << "Begninning of ComputeDescriptorOfEstimatedTracks";
 		
@@ -100,6 +100,14 @@ namespace
 					// if the track references to the view, and the descriptor to the result, and the set the flag
 					if (feature->x == kpts[k].pt.x && feature->y == kpts[k].pt.y)
 					{
+						Eigen::Vector4d p_h = track->Point();
+						Eigen::Vector3d p = p_h.hnormalized();
+						cv::Point3d p_cv;
+						p_cv.x = p(0);
+						p_cv.y = p(1);
+						p_cv.z = p(2);
+						points_3d.emplace_back(p_cv);
+
 						descriptors.push_back(des.row(k));
 						track_flags[i] = true;
 					}
@@ -131,24 +139,25 @@ bool WriteReconstruction(const CReconstruction& reconstruction,
 	CreateEstimatedSubreconstruction(reconstruction, &estimated_reconstruction);
 
 	cv::Mat des;
-	ComputeDescriptorOfEstimatedTracks(estimated_reconstruction, des);
+	std::vector<cv::Point3d> points_3d;
+	ComputeDescriptorOfEstimatedTracks(estimated_reconstruction, des, points_3d);
 	LOG(INFO);
 
-	std::vector<cv::Point3d> points_3d;
-	std::vector<TrackId> ids = estimated_reconstruction.TrackIds();
-	for (const auto& id : ids)
-	{
-		const CTrack* track = estimated_reconstruction.Track(id);
-		CHECK_NOTNULL(track);
+	
+	//std::vector<TrackId> ids = estimated_reconstruction.TrackIds();
+	//for (const auto& id : ids)
+	//{
+	//	const CTrack* track = estimated_reconstruction.Track(id);
+	//	CHECK_NOTNULL(track);
 
-		Eigen::Vector4d p_h = track->Point();
-		Eigen::Vector3d p = p_h.hnormalized();
-		cv::Point3d p_cv;
-		p_cv.x = p(0);
-		p_cv.y = p(1);
-		p_cv.z = p(2);
-		points_3d.emplace_back(p_cv);
-	}
+	//	Eigen::Vector4d p_h = track->Point();
+	//	Eigen::Vector3d p = p_h.hnormalized();
+	//	cv::Point3d p_cv;
+	//	p_cv.x = p(0);
+	//	p_cv.y = p(1);
+	//	p_cv.z = p(2);
+	//	points_3d.emplace_back(p_cv);
+	//}
 
 	cv::Mat points3dmatrix = cv::Mat(points_3d);
 	cv::FileStorage fs(output_file, cv::FileStorage::WRITE);

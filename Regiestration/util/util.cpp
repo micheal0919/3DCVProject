@@ -57,6 +57,12 @@ void SwapCameras(TwoViewInfo* twoview_info)
 bool ImageInfoToCameraInfo(const ImageInfo& info, CameraIntrinsicsPrior& intrinsics,
 	Eigen::Matrix3d& camera_orientation_matrix, Eigen::Vector3d& camera_postion)
 {
+	LOG(INFO) << "info.image_name = " << info.image_name;
+	LOG(INFO) << "info.image_width = " << info.image_width;
+	LOG(INFO) << "info.image_height = " << info.image_height;
+	LOG(INFO) << "info.k_mat = " << info.K_mat;
+	LOG(INFO) << "info.RT_mat" << info.RT_mat;
+
 	intrinsics.image_width = info.image_width;
 	intrinsics.image_height = info.image_height;
 
@@ -82,9 +88,22 @@ bool ImageInfoToCameraInfo(const ImageInfo& info, CameraIntrinsicsPrior& intrins
 		}
 	}
 
+
 	camera_postion(0) = info.RT_mat.at<double>(0, 3);
 	camera_postion(1) = info.RT_mat.at<double>(1, 3);
 	camera_postion(2) = info.RT_mat.at<double>(2, 3);
+
+	LOG(INFO) << "camera postion is " << camera_postion(0) << " " << camera_postion(1) << " " << camera_postion(2);
+	LOG(INFO) << "camera ratation matrix is "
+		<< camera_orientation_matrix(0, 0) << " "
+		<< camera_orientation_matrix(0, 1) << " "
+		<< camera_orientation_matrix(0, 2) << " "
+		<< camera_orientation_matrix(1, 0) << " "
+		<< camera_orientation_matrix(1, 1) << " "
+		<< camera_orientation_matrix(1, 2) << " "
+		<< camera_orientation_matrix(2, 0) << " "
+		<< camera_orientation_matrix(2, 1) << " "
+		<< camera_orientation_matrix(2, 2) << " ";
 
 	return true;
 }
