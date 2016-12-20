@@ -41,6 +41,8 @@ private:
 	// Draw the 3D coordinate axes
 	void Draw3DCoordinateAxes(cv::Mat image, const std::vector<cv::Point2d> &list_points2d);
 
+	void Draw(IplImage* image, const cv::Mat& rvec, const cv::Mat& tvec);
+
 private:
 	Options m_options;
 	std::vector<cv::Point3d> m_3d_points;

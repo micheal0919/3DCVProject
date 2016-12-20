@@ -19,10 +19,6 @@ using Eigen::Vector4d;
 
 namespace {
 
-// Given either a fundamental or essential matrix and two corresponding images
-// points such that ematrix * point2 produces a line in the first image,
-// this method finds corrected image points such that
-// corrected_point1^t * ematrix * corrected_point2 = 0.
 void FindOptimalImagePoints(const Matrix3d& ematrix,
 	const Vector2d& point1,
 	const Vector2d& point2,

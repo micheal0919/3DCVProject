@@ -41,8 +41,11 @@ CPoseEstimator::~CPoseEstimator()
 
 bool CPoseEstimator::Init()
 {
+	//get image properties
+	char config_default[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dsvl_input><camera show_format_dialog=\"false\" friendly_name=\"\" frame_width=\"640\" frame_height=\"480\"><pixel_format><RGB32 flip_h=\"false\" flip_v=\"true\"/></pixel_format></camera></dsvl_input>";
+
 	// check if we succeeded
-	if (!m_cap.init())
+	if (!m_cap.init(config_default))
 	{
 		LOG(ERROR) << "Fail to open video capture" << std::endl;
 		return false;
@@ -142,6 +145,7 @@ bool CPoseEstimator::EstimatePoses()
 			K_mat.at<double>(i, j) = K_matrix[i + j * 3];
 		}
 	}
+	LOG(INFO) << "K mat is " << K_mat;
 
 	//for (int i = 0; i < 9; i++)
 	//{

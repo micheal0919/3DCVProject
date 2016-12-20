@@ -15,10 +15,6 @@ using Eigen::Vector4d;
 
 namespace{
 
-// Extract intrinsics from a calibration matrix of the following form:
-//   [focal_length            skew               principal_point_x]
-//   [0            focal_length * aspect_ratio   principal_point_y]
-//   [0                         0                              1.0]
 void IntrinsicsToCalibrationMatrix(const double focal_length,
 	const double skew,
 	const double aspect_ratio,
@@ -44,7 +40,6 @@ bool ComposeProjectionMatrix(const Eigen::Matrix3d& calibration_matrix,
 	Matrix3x4d* pmatrix);
 
 
-// implementation
 void IntrinsicsToCalibrationMatrix(const double focal_length,
 	const double skew,
 	const double aspect_ratio,
@@ -74,16 +69,11 @@ void CalibrationMatrixToIntrinsics(const Matrix3d& calibration_matrix,
 }
 
 
-// Projects a 3x3 matrix to the rotation matrix in SO3 space with the closest
-// Frobenius norm. For a matrix with an SVD decomposition M = USV, the nearest
-// rotation matrix is R = UV'.
 Matrix3d ProjectToRotationMatrix(const Matrix3d& matrix) {
 	Eigen::JacobiSVD<Matrix3d> svd(matrix,
 		Eigen::ComputeFullU | Eigen::ComputeFullV);
 	Matrix3d rotation_mat = svd.matrixU() * (svd.matrixV().transpose());
 
-	// The above projection will give a matrix with a determinant +1 or -1. Valid
-	// rotation matrices have a determinant of +1.
 	if (rotation_mat.determinant() < 0) {
 		rotation_mat *= -1.0;
 	}
@@ -114,7 +104,6 @@ bool DecomposeProjectionMatrix(const Matrix3x4d pmatrix,
 		kmatrix = -rq.matrixR();
 	}
 
-	// Fix the matrix such that all internal parameters are greater than 0.
 	for (int i = 0; i < 3; ++i) {
 		if (kmatrix(i, i) < 0) {
 			kmatrix.col(i) *= -1.0;
@@ -122,11 +111,9 @@ bool DecomposeProjectionMatrix(const Matrix3x4d pmatrix,
 		}
 	}
 
-	// Solve for t.
 	const Vector3d t =
 		kmatrix.triangularView<Eigen::Upper>().solve(pmatrix.col(3));
 
-	// c = - R' * t, and flip the sign according to k_det;
 	if (k_det > 0) {
 		*position = -rotation_matrix.transpose() * t;
 	}
@@ -162,17 +149,6 @@ bool ComposeProjectionMatrix(const Matrix3d& calibration_matrix,
 }
 
 
-// Projects a homogeneous 3D point to an image by assuming a camera model
-// defined by the Camera class. This function is templated so that it can be
-// used by Ceres for bundle adjument in addition to the standard reprojection
-// with doubles.
-//
-// Returns the depth of the 3D point subject to the projective scale (i.e. the
-// depth of the point assuming the image plane is at a depth of 1). The depth is
-// useful, for instance, to determine if the point reprojects behind the image.
-//
-// NOTE: The unit test for this method is included in
-// theia/sfm/camera/camera_test.cc
 template <typename T>
 T ProjectPointToImage(const T* extrinsic_parameters,
 	const T* intrinsic_parameters,
@@ -181,42 +157,24 @@ T ProjectPointToImage(const T* extrinsic_parameters,
 	typedef Eigen::Matrix<T, 3, 1> Matrix3T;
 	typedef Eigen::Map<const Matrix3T> ConstMap3T;
 
-	// Remove the translation.
 	Eigen::Matrix<T, 3, 1> adjusted_point =
 		ConstMap3T(point) -
 		point[3] * ConstMap3T(extrinsic_parameters + CCamera::POSITION);
 
-	// Rotate the point.
 	T rotated_point[3];
 	ceres::AngleAxisRotatePoint(extrinsic_parameters + CCamera::ORIENTATION,
 		adjusted_point.data(),
 		rotated_point);
 
-	// Get normalized pixel projection at image plane depth = 1.
 	const T& depth = rotated_point[2];
 	const T normalized_pixel[2] = { rotated_point[0] / depth,
 		rotated_point[1] / depth };
 
-	// Apply radial distortion.
-	//T distorted_pixel[2];
-	//RadialDistortPoint(normalized_pixel[0],
-	//	normalized_pixel[1],
-	//	intrinsic_parameters[CCamera::RADIAL_DISTORTION_1],
-	//	intrinsic_parameters[CCamera::RADIAL_DISTORTION_2],
-	//	distorted_pixel,
-	//	distorted_pixel + 1);
-
-	// Apply calibration parameters to transform normalized units into pixels.
 	const T& focal_length = intrinsic_parameters[CCamera::FOCAL_LENGTH];
 	const T& skew = intrinsic_parameters[CCamera::SKEW];
 	const T& aspect_ratio = intrinsic_parameters[CCamera::ASPECT_RATIO];
 	const T& principal_point_x = intrinsic_parameters[CCamera::PRINCIPAL_POINT_X];
 	const T& principal_point_y = intrinsic_parameters[CCamera::PRINCIPAL_POINT_Y];
-
-	//pixel[0] = focal_length * distorted_pixel[0] + skew * distorted_pixel[1] +
-	//	principal_point_x;
-	//pixel[1] = focal_length * aspect_ratio * distorted_pixel[1] +
-	//	principal_point_y;
 
 	pixel[0] = focal_length * normalized_pixel[0] + skew * normalized_pixel[1] +
 		principal_point_x;

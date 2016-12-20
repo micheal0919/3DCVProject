@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 	{
 		google::InitGoogleLogging("LogFileName");
 		// 0: log to file; 1: log to std io
-		FLAGS_logtostderr = 1;
+		FLAGS_logtostderr = 0;
 		FLAGS_logbuflevel = 1;
 		google::SetLogDestination(0, "./LOG.");
 	}

@@ -17,11 +17,8 @@ public:
 	explicit CTrackBuilder(const int max_track_length);
 	~CTrackBuilder();
 
-	// Adds a feature correspondence between two views.
 	void AddFeatureCorrespondence(const ViewId view_id1, const Feature& feature1,
 		const ViewId view_id2, const Feature& feature2);
-
-	// Generates all tracks and adds them to the reconstruction.
 	void BuildTracks(CReconstruction* reconstruction);
 
 private:

@@ -22,7 +22,7 @@ bool AddViewToReconstruction(const std::string& image_filepath,
 		CReconstruction* reconstruction) 
 {
 	LOG(INFO) << "Beginning of AddViewToReconstruction";
-	// Add the image to the reconstruction.
+
 	const ViewId view_id = reconstruction->AddView(image_filepath);
 	if (view_id == kInvalidViewId) {
 		LOG(INFO) << "Could not add " << image_filepath
@@ -30,7 +30,6 @@ bool AddViewToReconstruction(const std::string& image_filepath,
 		return false;
 	}
 
-	// Add the camera intrinsics priors if available.
 	if (intrinsics != nullptr) {
 		CView* view = reconstruction->MutableView(view_id);
 		*view->MutableCameraIntrinsicsPrior() = *intrinsics;
@@ -132,7 +131,6 @@ CReconstructionBuilder::~CReconstructionBuilder()
 {
 }
 
-// Add all images to the reconstruction.
 bool CReconstructionBuilder::AddImages()
 {
 	LOG(INFO) << "Beginning of CReconstructionBuilder::AddImages";
@@ -157,6 +155,13 @@ bool CReconstructionBuilder::AddImages()
 		ImageInfoToCameraInfo(infos[i], intrinsics, camera_ration_matrix, camera_postion);
 		CHECK(AddViewToReconstruction(image_path, &intrinsics, camera_ration_matrix, camera_postion, m_reconstruction.get()));
 
+		//cv::Mat img = cv::imread(image_path);
+		//cv::Size size(infos[i].image_width, infos[i].image_height);
+		//cv::resize(img, img, size);
+		//image_name = "sfm" + image_name;
+		//image_path = m_options.image_path + image_name;
+		//cv::imwrite(image_path, img);
+
 		m_feature_extractor_and_matcher->AddImage(image_path, intrinsics);
 	}
 	
@@ -166,7 +171,6 @@ bool CReconstructionBuilder::AddImages()
 	return true;
 }
 
-// Extracts features and performs matching with geometric verification.
 bool CReconstructionBuilder::ExtractAndMatchFeatures()
 {
 	LOG(INFO) << "Beginning of CReconstructionBuilder::ExtractAndMatchFeatures";
@@ -175,17 +179,14 @@ bool CReconstructionBuilder::ExtractAndMatchFeatures()
 		"called.";
 	LOG(INFO);
 
-	// Extract features and obtain the feature matches.
 	std::vector<ImagePairMatch> matches;
 	m_feature_extractor_and_matcher->ExtractAndMatchFeatures(matches);
 	LOG(INFO);
 
-	// Log how many view pairs were geometrically verified.
 	const size_t num_total_view_pairs = m_image_filepaths.size() * (m_image_filepaths.size() - 1) / 2;
 	LOG(INFO) << matches.size() << " of " << num_total_view_pairs
 		<< " view pairs were matched and geometrically verified.";
 
-	// Add the matches to the view graph and reconstruction.
 	for (const auto& match : matches) {
 		AddTwoViewMatch(match.image1, match.image2, match);
 	}
@@ -202,14 +203,12 @@ bool CReconstructionBuilder::BuildReconstruction(std::vector<CReconstruction*>* 
 		"in order to create a "
 		"reconstruction.";
 
-	// Build tracks if they were not explicitly specified.
 	if (m_reconstruction->NumTracks() == 0) 
 	{
 		m_track_builder->BuildTracks(m_reconstruction.get());
 	}
 	LOG(INFO) << "Suceed to build all tracks, and the track num is " << m_reconstruction->NumTracks();
-	
-	// Remove uncalibrated views from the reconstruction and view graph.
+
 	if (m_options.only_calibrated_views) {
 		LOG(INFO) << "Removing uncalibrated views.";
 //		RemoveUncalibratedViews();
@@ -245,8 +244,6 @@ bool CReconstructionBuilder::BuildReconstruction(std::vector<CReconstruction*>* 
 			<< "\n\tTotal time = " << summary.total_time
 			<< "\n\n" << summary.message;
 
-		// Remove estimated views and tracks and attempt to create a reconstruction
-		// from the remaining unestimated parts.
 		reconstructions->emplace_back(CreateEstimatedSubreconstruction(*m_reconstruction));
 		RemoveEstimatedViewsAndTracks(m_reconstruction.get(), m_view_graph.get());
 		LOG(INFO);
@@ -277,8 +274,6 @@ bool CReconstructionBuilder::AddTwoViewMatch(const std::string& image1,
 {
 	LOG(INFO) << "Beginning of CReconstructionBuilder::AddTwoViewMatch";
 
-	// Get view ids from names and check that the views are valid (i.e. that
-	// they have been added to the reconstruction).
 	const ViewId view_id1 = m_reconstruction->ViewIdFromName(image1);
 	const ViewId view_id2 = m_reconstruction->ViewIdFromName(image2);
 	CHECK_NE(view_id1, kInvalidViewId)
@@ -288,10 +283,6 @@ bool CReconstructionBuilder::AddTwoViewMatch(const std::string& image1,
 		<< "Tried to add a view with the name " << image2
 		<< " to the view graph but does not exist in the reconstruction.";
 
-
-
-	// If we only want calibrated views, do not add the match if it contains an
-	// uncalibrated view since it will add uncalibrated views to the tracks.
 	const CView* view1 = m_reconstruction->View(view_id1);
 	const CView* view2 = m_reconstruction->View(view_id2);
 	if (m_options.only_calibrated_views &&
@@ -300,10 +291,7 @@ bool CReconstructionBuilder::AddTwoViewMatch(const std::string& image1,
 		return false;
 	}
 
-	// Add valid matches to view graph.
 	AddMatchToViewGraph(view_id1, view_id2, matches);
-
-	// Add tracks to the track builder.
 	AddTracksForMatch(view_id1, view_id2, matches);
 
 	LOG(INFO) << "Endding of CReconstructionBuilder::AddTwoViewMatch";
@@ -318,10 +306,6 @@ void CReconstructionBuilder::AddMatchToViewGraph(
 {
 	LOG(INFO) << "Beginning of CReconstructionBuilder::AddMatchToViewGraph";
 
-	// Add the view pair to the reconstruction. The view graph requires the two
-	// view info
-	// to specify the transformation from the smaller view id to the larger view
-	// id. We swap the cameras here if that is not already the case.
 	TwoViewInfo twoview_info = image_matches.twoview_info;
 	if (view_id1 > view_id2) {
 		SwapCameras(&twoview_info);

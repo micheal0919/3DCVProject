@@ -56,18 +56,11 @@ public:
 	void FastRobustMatch(const cv::Mat& frame, std::vector<cv::DMatch>& good_matches,
 		std::vector<cv::KeyPoint>& keypoints_frame,
 		const cv::Mat& descriptors_model);
-
-	// Compute the keypoints of an image
 	void ComputeKeyPoints(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints);
-
-	// Compute the descriptors of an image given its keypoints
 	void ComputeDescriptors(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors);
 
 private:
-	// Clear matches for which NN ratio is > than threshold
-	// return the number of removed points
-	// (corresponding entries being cleared,
-	// i.e. size will be 0)
+
 	int RatioTest(std::vector<std::vector<cv::DMatch> > &matches);
 
 	// Insert symmetrical matches in symMatches vector
@@ -75,17 +68,14 @@ private:
 		const std::vector<std::vector<cv::DMatch> >& matches2,
 		std::vector<cv::DMatch>& symMatches);
 
-	
+	void HomographyTest(const std::vector<cv::KeyPoint>& keypoints_1, const std::vector<cv::KeyPoint>& keypoints_2, 
+		const std::vector<cv::DMatch> &matches, std::vector<cv::DMatch>& homo_matches);
 
 
 private:
-	// pointer to the feature point detector object
 	cv::Ptr<cv::FeatureDetector> m_detector;
-	// pointer to the feature descriptor extractor object
 	cv::Ptr<cv::DescriptorExtractor> m_extractor;
-	// pointer to the matcher object
 	cv::Ptr<cv::DescriptorMatcher> m_matcher;
-	// max ratio between 1st and 2nd NN
 	double m_ratio;
 };
 

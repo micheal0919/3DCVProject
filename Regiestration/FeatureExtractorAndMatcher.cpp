@@ -92,13 +92,11 @@ void CFeatureExtractorAndMatcher::ExtractAndMatchFeatures(std::vector<ImagePairM
 {
 	LOG(INFO) << "Beginning of CFeatureExtractorAndMatcher::ExtractAndMatchFeatures";
 
-	// Compute the total number of potential matches.
 	m_pairs_to_match.clear();
 	const size_t num_pairs_to_match = m_image_filepaths.size() * (m_image_filepaths.size() - 1) / 2;
 	m_pairs_to_match.reserve(num_pairs_to_match);
 	LOG(INFO);
 
-	// Create a list of all possible image pairs.
 	for (size_t i = 0; i < m_image_filepaths.size() - 1; i++)
 	{
 		for (size_t j = i + 1; j < m_image_filepaths.size(); j++)
@@ -108,7 +106,6 @@ void CFeatureExtractorAndMatcher::ExtractAndMatchFeatures(std::vector<ImagePairM
 	}
 	LOG(INFO) << "m_pairs_to_match.size() = " << m_pairs_to_match.size();
 
-	// match all the pairs 
 	matches.clear();
 	for (size_t i = 0; i < m_pairs_to_match.size(); i++)
 	{

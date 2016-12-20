@@ -19,14 +19,10 @@ void GetObservationsFromTrackViews(
 	const CTrack track = *reconstruction.Track(track_id);
 	for (const ViewId view_id : track.ViewIds()) {
 		const CView* view = reconstruction.View(view_id);
-
-		// Skip this view if it does not exist or has not been estimated yet.
 		if (view == nullptr || !view->IsEstimated()) {
 			continue;
 		}
 
-		// If the feature is not in the view then we have an ill-formed
-		// reconstruction.
 		const Feature* feature = CHECK_NOTNULL(view->GetFeature(track_id));
 		Eigen::Vector2d pixel(feature->x, feature->y);
 		const Eigen::Vector3d image_ray =
@@ -38,9 +34,6 @@ void GetObservationsFromTrackViews(
 	}
 }
 
-// Returns false if the reprojection error of the triangulated point is greater
-// than the max allowable reprojection error (for any observation) and true
-// otherwise.
 bool AcceptableReprojectionError(
 	const CReconstruction& reconstruction,
 	const TrackId& track_id,
@@ -90,7 +83,6 @@ int NumEstimatedViewsObservingTrack(const CReconstruction& reconstruction,
 
 }  // namespace
 
-// Estimate only the tracks supplied by the user.
 CTrackEstimator::Summary CTrackEstimator::EstimateAllTracks() 
 {
 	LOG(INFO) << "CTrackEstimator::EstimateAllTracks()";
@@ -109,8 +101,6 @@ CTrackEstimator::Summary CTrackEstimator::EstimateTracks(
 	m_successfully_estimated_tracks.clear();
 
 	CTrackEstimator::Summary summary;
-
-	// Get all unestimated track ids.
 	m_tracks_to_estimate.reserve(track_ids.size());
 	for (const TrackId track_id : track_ids) 
 	{
@@ -122,7 +112,7 @@ CTrackEstimator::Summary CTrackEstimator::EstimateTracks(
 
 		const int num_views_observing_track =
 			NumEstimatedViewsObservingTrack(*m_reconstruction, *track);
-		// Skip tracks that do not have enough observations.
+
 		if (num_views_observing_track < 2) {
 			continue;
 		}
@@ -130,14 +120,12 @@ CTrackEstimator::Summary CTrackEstimator::EstimateTracks(
 	}
 	summary.num_triangulation_attempts = m_tracks_to_estimate.size();
 
-	// Exit early if there are no tracks to estimate.
 	if (m_tracks_to_estimate.size() == 0) {
 		return summary;
 	}
 
 	EstimateTrackSet(0, m_tracks_to_estimate.size());
 
-	// Find the tracks that were newly estimated.
 	for (const TrackId track_id : m_tracks_to_estimate) 
 	{
 		CTrack* track = m_reconstruction->MutableTrack(track_id);
@@ -198,7 +186,6 @@ bool CTrackEstimator::EstimateTrackMidpoint(const TrackId track_id)
 	CHECK(!track->IsEstimated()) << "Track " << track_id
 		<< " is already estimated.";
 
-	// Gather projection matrices and features.
 	std::vector<ViewId> view_ids;
 	std::vector<Eigen::Vector3d> origins, ray_directions;
 	GetObservationsFromTrackViews(track_id,
@@ -207,21 +194,18 @@ bool CTrackEstimator::EstimateTrackMidpoint(const TrackId track_id)
 		&origins,
 		&ray_directions);
 
-	// Check the angle between views.
 	if (!SufficientTriangulationAngle(ray_directions, m_options.min_triangulation_angle_degrees))
 	{
 		LOG(WARNING) << "insufficient triangulation angle";
 		return false;
 	}
 
-	// Triangulate the track.
 	if (!TriangulateMidpoint(origins, ray_directions, track->MutablePoint()))
 	{
 		LOG(WARNING) << "TriangulateMidpoint failed";
 		return false;
 	}
 
-	// Ensure the reprojection errors are acceptable.
 	const double sq_max_reprojection_error_pixels =
 		m_options.max_acceptable_reprojection_error_pixels *
 		m_options.max_acceptable_reprojection_error_pixels;
@@ -252,8 +236,6 @@ bool CTrackEstimator::EstimateTrackNViewSVD(const TrackId track_id)
 	for (const ViewId view_id : track->ViewIds()) 
 	{
 		const CView* view = m_reconstruction->View(view_id);
-
-		// Skip this view if it does not exist or has not been estimated yet.
 		if (view == nullptr || !view->IsEstimated()) {
 			continue;
 		}
@@ -271,14 +253,18 @@ bool CTrackEstimator::EstimateTrackNViewSVD(const TrackId track_id)
 
 	}
 
-	// Triangulate the track.
+	//if (poses.size() < 10)
+	//{
+	//	LOG(WARNING) << "There are NOT enough poses to esitmate the point";
+	//	return false;
+	//}
+
 	if (!TriangulateNViewSVD(poses, points, track->MutablePoint()))
 	{
 		LOG(WARNING) << "TriangulateMidpoint failed";
 		return false;
 	}
 
-	// Ensure the reprojection errors are acceptable.
 	const double sq_max_reprojection_error_pixels =
 		m_options.max_acceptable_reprojection_error_pixels *
 		m_options.max_acceptable_reprojection_error_pixels;
@@ -310,12 +296,9 @@ bool CTrackEstimator::EstimateTrackNView(const TrackId track_id)
 	for (const ViewId view_id : track->ViewIds())
 	{
 		const CView* view = m_reconstruction->View(view_id);
-
-		// Skip this view if it does not exist or has not been estimated yet.
 		if (view == nullptr || !view->IsEstimated()) {
 			continue;
 		}
-
 
 		const Feature* feature = view->GetFeature(track_id);
 		CHECK(feature) << "fail to get the featue in this view";
@@ -329,14 +312,12 @@ bool CTrackEstimator::EstimateTrackNView(const TrackId track_id)
 
 	}
 
-	// Triangulate the track.
 	if (!TriangulateNView(poses, points, track->MutablePoint()))
 	{
 		LOG(WARNING) << "TriangulateMidpoint failed";
 		return false;
 	}
 
-	// Ensure the reprojection errors are acceptable.
 	const double sq_max_reprojection_error_pixels =
 		m_options.max_acceptable_reprojection_error_pixels *
 		m_options.max_acceptable_reprojection_error_pixels;
@@ -413,8 +394,6 @@ void CTrackEstimator::reconstruction_test()
 		//cv::waitKey();
 
 	}
-
-
 
 	LOG(INFO) << "Endding of CTrackEstimator::reconstruction_test";
 }

@@ -16,31 +16,21 @@ struct ReconstructionEstimatorSummary
 	std::unordered_set<ViewId> estimated_views;
 	std::unordered_set<TrackId> estimated_tracks;
 
-	// All times are given in seconds.
 	double camera_intrinsics_calibration_time = 0.0;
 	double pose_estimation_time = 0.0;
 	double triangulation_time = 0.0;
 	double bundle_adjustment_time = 0.0;
 	double total_time = 0.0;
 
-	// The child classes can fill this message with any useful information
-	// relevant to the reconstruction process. For instance, the nonlinear
-	// estimator may fill this message with timing statistics that are only
-	// relevant to the nonlinear estimator.
 	std::string message;
 };
 
-// Global SfM methods are considered to be more scalable while incremental SfM
-// is less scalable but often more robust.
 enum class ReconstructionEstimatorType 
 {
 	GLOBAL = 0,
 	INCREMENTAL = 1
 };
 
-// The recommended type of rotations solver is the Robust L1-L2 method. This
-// method is scalable, extremely accurate, and very efficient. See the
-// global_pose_estimation directory for more details.
 enum class GlobalRotationEstimatorType 
 {
 	ROBUST_L1L2 = 0,
@@ -48,14 +38,7 @@ enum class GlobalRotationEstimatorType
 	LINEAR = 2
 };
 
-// Global position estimation methods.
-//   NONLINEAR: This method minimizes the nonlinear pairwise translation
-//     constraint to solve for positions.
-//   LINEAR_TRIPLET: This linear method computes camera positions by
-//     minimizing an error for image triplets. Essentially, it tries to
-//     enforce a loop/triangle constraint for triplets.
-//   LEAST_UNSQUARED_DEVIATION: This robust method uses the least unsquared
-//     deviation instead of least squares. It is essentially an L1 solver.
+
 enum class GlobalPositionEstimatorType 
 {
 	NONLINEAR = 0,
@@ -63,7 +46,7 @@ enum class GlobalPositionEstimatorType
 	LEAST_UNSQUARED_DEVIATION = 2,
 };
 
-// Options for the reconstruction estimation.
+
 struct ReconstructionEstimatorOptions 
 {
 	// Type of reconstruction estimation to use.

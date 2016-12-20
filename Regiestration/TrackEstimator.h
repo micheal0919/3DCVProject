@@ -19,19 +19,10 @@ public:
 	};
 
 	struct Summary {
-		// Number of estimated tracks that were input.
 		int input_num_estimated_tracks = 0;
-
-		// Number of estimated tracks after trianguation.
 		int final_num_estimated_tracks = 0;
-
-		// Number of triangulation attempts made.
 		int num_triangulation_attempts = 0;
-
-		// TrackId of the newly estimated tracks. This set does not include tracks
-		// that were input as estimated.
 		std::unordered_set<TrackId> estimated_tracks;
-
 		double ba_setup_time_in_seconds = 0;
 		double ba_total_time_in_seconds = 0;
 	};
@@ -39,10 +30,7 @@ public:
 	CTrackEstimator(const Options& options, CReconstruction* reconstruction)
 		: m_options(options), m_reconstruction(reconstruction) {}
 
-	// Attempts to estimate all unestimated tracks.
 	Summary EstimateAllTracks();
-
-	// Estimate only the tracks supplied by the user.
 	Summary EstimateTracks(const std::unordered_set<TrackId>& track_ids);
 
 private:

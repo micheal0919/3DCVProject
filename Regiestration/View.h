@@ -11,9 +11,7 @@
 #include "MapUtils.h"
 #include "Camera.h"
 
-// A View contains high level information about an image that has been
-// captured. This includes the name, EXIF metadata, and track information that
-// is found through feature matching.
+
 class CView {
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

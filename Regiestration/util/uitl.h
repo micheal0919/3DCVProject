@@ -17,12 +17,8 @@ double DegToRad(double angle_degrees);
 
 std::string GetImageNameFromNum(int num);
 
-// Inverts the two view info such that the focal lengths are swapped and the
-// rotation and position are inverted.
 void SwapCameras(TwoViewInfo* twoview_info);
 
-// A macro to disallow the copy constructor and operator= functions
-// This should be used in the private: declarations for a class
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 	TypeName(const TypeName&);               \
 	void operator=(const TypeName&)
